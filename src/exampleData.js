@@ -1,17 +1,17 @@
 // src/exampleData.js
 const exampleData = [
-    { time: '25.866', weight: 0
-    },
-     { time: '25.966', weight: 1
-    },
-     { time: '26.066', weight: 2
-    },
-     { time: '26.166', weight: 6
-    },
-     { time: '26.266', weight: 8
-    },
-     { time: '26.366', weight: 9
-    },
+    // { time: '25.866', weight: 0
+    // },
+    //  { time: '25.966', weight: 1
+    // },
+    //  { time: '26.066', weight: 2
+    // },
+    //  { time: '26.166', weight: 6
+    // },
+    //  { time: '26.266', weight: 8
+    // },
+    //  { time: '26.366', weight: 9
+    // },
      { time: '26.466', weight: 10.8
     },
      { time: '26.514', weight: 15.7

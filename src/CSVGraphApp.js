@@ -13,7 +13,7 @@ import exampleData from './exampleData';
 
 const CSVGraphApp = () => {
   const [data, setData] = useState(exampleData);
-  const [threshold, setThreshold] = useState(5); // Default threshold
+  const [threshold, setThreshold] = useState(0.5); // Default threshold
   const [pullMeans, setPullMeans] = useState([]);
 
   useEffect(() => {
@@ -30,21 +30,44 @@ const CSVGraphApp = () => {
         currentPull.push(point.weight);
       } else {
         if (currentPull.length > 0) {
-          const sum = currentPull.reduce((a, b) => a + b, 0);
-          const mean = sum / currentPull.length;
-          pulls.push(mean);
+          pulls.push(currentPull);
           currentPull = [];
         }
       }
     });
 
     if (currentPull.length > 0) {
-      const sum = currentPull.reduce((a, b) => a + b, 0);
-      const mean = sum / currentPull.length;
-      pulls.push(mean);
+      pulls.push(currentPull);
     }
 
-    return pulls;
+    const means = pulls.map((pull, index, arr) => {
+      const sum = pull.reduce((acc, val) => acc + val, 0);
+      const mean = sum / pull.length;
+      let difference = null;
+      if (index > 0) {
+        const previousMean = arr[index - 1].reduce((acc, val) => acc + val, 0) / arr[index - 1].length;
+        difference = mean - previousMean;
+      }
+      return {
+        pullNumber: index + 1,
+        meanWeight: mean,
+        difference: difference,
+      };
+    });
+
+    // Calculate increments of the differences
+    for (let i = 2; i < means.length; i++) {
+      const currentDifference = means[i].difference;
+      const lastDifference = means[i - 1].difference;
+      
+      if (lastDifference !== 0 && lastDifference !== null && currentDifference !== null) {
+        means[i].increment = ((currentDifference - lastDifference) / lastDifference) * 100;
+      } else {
+        means[i].increment = null;
+      }
+    }
+
+    return means;
   };
 
   return (
@@ -77,16 +100,31 @@ const CSVGraphApp = () => {
           <Bar dataKey="weight" fill="#8884d8" />
         </BarChart>
       </ResponsiveContainer>
-      <div>
-        <h3>Mean Weight of Each Pull:</h3>
-        <ul>
-          {pullMeans.map((mean, index) => (
-            <li key={index}>
-              Pull {index + 1}: {mean.toFixed(2)} kg
-            </li>
+      <h1>Pull Means</h1>
+      <table style={{ border: '1px solid black', borderCollapse: 'collapse' }}>
+        <thead>
+          <tr>
+            <th style={{ border: '1px solid black' }}></th>
+            <th style={{ border: '1px solid black' }}>Mean weight</th>
+            <th style={{ border: '1px solid black' }}>Difference between last pull</th>
+            <th style={{ border: '1px solid black' }}>Increment of the differences</th>
+          </tr>
+        </thead>
+        <tbody>
+          {pullMeans.map((pull) => (
+            <tr key={pull.pullNumber}>
+              <td style={{ border: '1px solid black' }}>{`Pull ${pull.pullNumber}`}</td>
+              <td style={{ border: '1px solid black' }}>{pull.meanWeight.toFixed(2)}</td>
+              <td style={{ border: '1px solid black' }}>
+                {pull.difference !== null ? pull.difference.toFixed(2) : ''}
+              </td>
+              <td style={{ border: '1px solid black' }}>
+                {pull.increment !== null && pull.increment !== undefined ? `${pull.increment.toFixed(2)}%` : ''}
+              </td>
+            </tr>
           ))}
-        </ul>
-      </div>
+        </tbody>
+      </table>
     </div>
   );
 };
