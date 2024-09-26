@@ -1,86 +1,92 @@
-import React, { useState } from 'react';
-import { BarChart, Bar, XAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Upload } from 'lucide-react';
-import { YAxis } from 'recharts';
+import React, { useState, useEffect } from 'react';
+import {
+  ResponsiveContainer,
+  BarChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  Bar
+} from 'recharts';
 import exampleData from './exampleData';
 
 const CSVGraphApp = () => {
-  /*
-  const [data, setData] = useState([]);
+  const [data, setData] = useState(exampleData);
+  const [threshold, setThreshold] = useState(5); // Default threshold
+  const [pullMeans, setPullMeans] = useState([]);
 
-  const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-    const reader = new FileReader();
+  useEffect(() => {
+    const means = calculatePullMeans(data, threshold);
+    setPullMeans(means);
+  }, [data, threshold]);
 
-    reader.onload = (e) => {
-      const content = e.target.result;
-      const lines = content.split('\n');
-      const parsedData = [];
+  const calculatePullMeans = (data, threshold) => {
+    const pulls = [];
+    let currentPull = [];
 
-      for (let i = 1; i < lines.length; i++) {
-        const [time, weight] = lines[i].split(',');
-        if (time && weight) {
-          parsedData.push({
-            time: parseFloat(time),
-            weight: parseFloat(weight)
-          });
+    data.forEach((point) => {
+      if (point.weight >= threshold) {
+        currentPull.push(point.weight);
+      } else {
+        if (currentPull.length > 0) {
+          const sum = currentPull.reduce((a, b) => a + b, 0);
+          const mean = sum / currentPull.length;
+          pulls.push(mean);
+          currentPull = [];
         }
       }
+    });
 
-      setData(parsedData);
-    };
+    if (currentPull.length > 0) {
+      const sum = currentPull.reduce((a, b) => a + b, 0);
+      const mean = sum / currentPull.length;
+      pulls.push(mean);
+    }
 
-    reader.readAsText(file);
+    return pulls;
   };
 
   return (
-    <div className="p-4 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">CSV Time vs Weight Graph</h1>
-      <div className="mb-4">
-        <label htmlFor="csv-upload" className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded inline-flex items-center">
-          <Upload className="mr-2" />
-          <span>Upload CSV</span>
-        </label>
-        <input
-          id="csv-upload"
-          type="file"
-          accept=".csv"
-          onChange={handleFileUpload}
-          className="hidden"
-        />
-      </div>
-      {data.length > 0 && (
-        <div className="border rounded p-4">
-          <ResponsiveContainer width="100%" height={400}>
-            <BarChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <CustomXAxis />
-              <CustomYAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="weight" fill="#8884d8" name="Weight" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      )}
-    </div>
-  );
-  */
-
-  const [data, setData] = useState(exampleData);
-
-  return (
     <div>
+      <div>
+        <label>
+          Threshold (0.5 - 10 kg):
+          <input
+            type="number"
+            value={threshold}
+            min="0.5"
+            max="10"
+            step="0.1"
+            onChange={(e) => setThreshold(parseFloat(e.target.value))}
+          />
+        </label>
+      </div>
       <ResponsiveContainer width="95%" height={300}>
         <BarChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="time" label={{ value: 'Time', position: 'insideBottom', offset: -5 }} />
-          <YAxis label={{ value: 'Weight', angle: -90, position: 'insideLeft' }} />
+          <XAxis
+            dataKey="time"
+            label={{ value: 'Time', position: 'insideBottom', offset: -5 }}
+          />
+          <YAxis
+            label={{ value: 'Weight', angle: -90, position: 'insideLeft' }}
+          />
           <Tooltip />
           <Legend />
           <Bar dataKey="weight" fill="#8884d8" />
         </BarChart>
       </ResponsiveContainer>
+      <div>
+        <h3>Mean Weight of Each Pull:</h3>
+        <ul>
+          {pullMeans.map((mean, index) => (
+            <li key={index}>
+              Pull {index + 1}: {mean.toFixed(2)} kg
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 };
