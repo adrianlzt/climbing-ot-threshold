@@ -2,17 +2,10 @@ import React, { useState } from 'react';
 import { BarChart, Bar, XAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Upload } from 'lucide-react';
 import { YAxis } from 'recharts';
-
-// Define default parameters directly in the function component
-const CustomYAxis = ({ label = { value: 'Weight', angle: -90, position: 'insideLeft' }, ...props }) => {
-  return <YAxis label={label} {...props} />;
-};
-
-const CustomXAxis = ({ label = { value: 'Time', position: 'insideBottom', offset: -5 }, ...props }) => {
-  return <XAxis label={label} {...props} />;
-};
+import exampleData from './exampleData';
 
 const CSVGraphApp = () => {
+  /*
   const [data, setData] = useState([]);
 
   const handleFileUpload = (event) => {
@@ -70,6 +63,24 @@ const CSVGraphApp = () => {
           </ResponsiveContainer>
         </div>
       )}
+    </div>
+  );
+  */
+
+  const [data, setData] = useState(exampleData);
+
+  return (
+    <div>
+      <ResponsiveContainer width="95%" height={300}>
+        <BarChart data={data}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="time" label={{ value: 'Time', position: 'insideBottom', offset: -5 }} />
+          <YAxis label={{ value: 'Weight', angle: -90, position: 'insideLeft' }} />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="weight" fill="#8884d8" />
+        </BarChart>
+      </ResponsiveContainer>
     </div>
   );
 };
