@@ -8,8 +8,6 @@ import {
   Tooltip,
   Legend,
   Bar,
-  LineChart, 
-  Line
 } from 'recharts';
 import exampleData from './exampleData';
 
@@ -20,12 +18,14 @@ const CSVGraphApp = () => {
   const [normalizedData, setNormalizedData] = useState([]);
 
   useEffect(() => {
-    const means = calculatePullMeans(data, threshold);
+    // Normalize the data (time starts at 0)
+    normalizeData(data);
+
+    const means = calculatePullMeans(normalizedData, threshold);
     setPullMeans(means);
 
-    // Normalize the data after calculating pull means
-    normalizeData(data);
-  }, [data, threshold]);
+
+  }, [data, threshold, normalizedData]);
 
   const calculatePullMeans = (data, threshold) => {
     const pulls = [];
@@ -74,6 +74,7 @@ const CSVGraphApp = () => {
         difference: difference,
         duration: pull[pull.length - 1].time - pull[0].time,
         restTime: restTime,
+        middleTime: pull[Math.floor(pull.length / 2)].time,
       };
     });
 
@@ -146,6 +147,7 @@ const CSVGraphApp = () => {
             <th style={{ border: '1px solid black' }}>Increment of the differences</th>
             <th style={{ border: '1px solid black' }}>Duration</th>
             <th style={{ border: '1px solid black' }}>Rest Time</th>
+            <th style={{ border: '1px solid black' }}>Middle Time</th>
           </tr>
         </thead>
         <tbody>
@@ -161,6 +163,7 @@ const CSVGraphApp = () => {
               </td>
               <td style={{ border: '1px solid black' }}>{pull.duration.toFixed(2)} s</td>
               <td style={{ border: '1px solid black' }}>{pull.restTime !== null ? `${pull.restTime.toFixed(2)} s` : ''}</td>
+              <td style={{ border: '1px solid black' }}>{pull.middleTime !== null ? pull.middleTime.toFixed(2) : ''} s</td>
             </tr>
           ))}
         </tbody>
