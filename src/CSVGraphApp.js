@@ -20,7 +20,7 @@ import Papa from 'papaparse';
 const CSVGraphApp = () => {
   const [dataSource, setDataSource] = useState('generateArray');
   const [data, setData] = useState(dataSource === 'exampleData' ? exampleData : generateArray());
-  const [threshold, setThreshold] = useState(0.5);
+  const [threshold, setThreshold] = useState(1.5);
   const [pullMeans, setPullMeans] = useState([]);
   const [normalizedData, setNormalizedData] = useState([]);
   const [combinedData, setCombinedData] = useState([]);
