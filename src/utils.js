@@ -17,7 +17,7 @@
         );
         const rSquared = 1 - ssRes / ssTotal;
 
-        return { slope, rSquared };
+        return { slope, intercept, rSquared };
       };
 
       let results = [];
@@ -26,10 +26,16 @@
         const formerPhase = pullMeans.slice(0, i);
         const latterPhase = pullMeans.slice(i);
 
-        const { slope: a1, rSquared: r2_1 } = linearRegression(formerPhase);
-        const { slope: a2, rSquared: r2_2 } = linearRegression(latterPhase);
+        const { slope: a1, intercept: b1, rSquared: r2_1 } = linearRegression(formerPhase);
+        const { slope: a2, intercept: b2, rSquared: r2_2 } = linearRegression(latterPhase);
 
         const r2Sum = r2_1 + r2_2;
+
+        // Calculate the cross point of the two lines
+        const formerEndTime = formerPhase[formerPhase.length - 1].endTime;
+        const latterStartTime = latterPhase[0].startTime;
+        const crossTime = (b2 - b1) / (a1 - a2);
+        const crossWeight = a1 * crossTime + b1;
 
         results.push({
           i: i,
@@ -37,8 +43,13 @@
           r2_1: r2_1,
           r2_2: r2_2,
           a1: a1,
+          b1: b1,
           a2: a2,
-          formerPhase: formerPhase,
+          b2: b2,
+          otTime: crossTime,
+          otWeight: crossWeight,
+          formerEndTime: formerEndTime,
+          latterStartTime: latterStartTime,
         });
       }
 
@@ -87,6 +98,8 @@
             pullNumber: index + 1,
             meanWeight: mean,
             difference: difference,
+            startTime: pull[0].time,
+            endTime: pull[pull.length - 1].time,
             duration: pull[pull.length - 1].time - pull[0].time,
             restTime: restTime,
             middleTime: pull[Math.floor(pull.length / 2)].time,
