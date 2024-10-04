@@ -90,14 +90,10 @@ const CSVGraphApp = () => {
         }
 
         const otIndex = combined.findIndex((point) => point.time >= otTime);
-        combined.splice(otIndex, 0, {
-          time: otTime,
-          weight: null,
-          meanWeight: null,
-          formerPhaseLine: null,
-          latterPhaseLine: null,
+        combined[otIndex] = {
+          ...combined[otIndex],
           otWeight: otWeight,
-        });
+        };
       }
 
       setCombinedData(combined);
