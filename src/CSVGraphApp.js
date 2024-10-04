@@ -58,7 +58,7 @@ const CSVGraphApp = () => {
 
       // If an inflection point is selected, add line points
       if (selectedInflectionPoint) {
-        const { a1, b1, a2, b2, formerEndTime, latterStartTime } = selectedInflectionPoint;
+        const { a1, b1, a2, b2, otTime, otWeight, formerEndTime, latterStartTime } = selectedInflectionPoint;
 
         // Iterate over the normalizedData and calculate the y-values for the lines formerPhaseLine and latterPhaseLine
         for (let i = 0; i < combined.length; i++) {
@@ -83,6 +83,18 @@ const CSVGraphApp = () => {
             latterPhaseLine,
           };
         }
+
+        // Introduce the OT point in the combined data at the right position
+        const otIndex = combined.findIndex((point) => point.time >= otTime);
+        combined.splice(otIndex, 0, {
+          time: otTime,
+          weight: null,
+          meanWeight: null,
+          formerPhaseLine: null,
+          latterPhaseLine: null,
+          otWeight: otWeight,
+        });
+
       }
 
       setCombinedData(combined);
@@ -146,10 +158,12 @@ const CSVGraphApp = () => {
           <YAxis
             label={{ value: 'Weight (kg)', angle: -90, position: 'insideLeft' }}
           />
-          <Tooltip />
+          {/* show data in tooltip with only two decimal places */}
+          <Tooltip formatter={(value) => value.toFixed(2)} />
           <Legend verticalAlign="top" height={36} />
           <Bar dataKey="weight" fill="#8884d8" />
           <Scatter name="Mean Weights" dataKey="meanWeight" fill="red" />
+          <Scatter name="OT Point" dataKey="otWeight" fill="blue" />
           <Line
             type="linear"
             dataKey="formerPhaseLine"
