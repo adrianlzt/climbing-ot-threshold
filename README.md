@@ -46,6 +46,8 @@ IDEA: unir las repeticiones cogiendo el mínimo de una repetición hasta el mism
 
 ## TODO
 
-- Generar error si hay un número de pulls diferente a nueve.
 - Permitir subir la barra de threshold en el gráfico en vez de tener que introducir el valor.
 - Revisar la aplicacioń, va muy lenta.
+- Generar errores si:
+  - hay un número de pulls diferente a nueve.
+  - una media es superior a la anterior.
