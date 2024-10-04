@@ -20,12 +20,18 @@ const CSVGraphApp = () => {
   const [normalizedData, setNormalizedData] = useState([]);
 
   useEffect(() => {
+    console.log('Data:', data);
+    console.log('Threshold:', threshold);
+    console.log('Normalized Data:', normalizedData);
+
     // Normalize the data (time starts at 0)
     normalizeData(data);
 
     const means = calculatePullMeans(normalizedData, threshold);
     setPullMeans(means);
 
+    // Find inflection point
+    findInflectionPoint(means);
 
   }, [data, threshold, normalizedData]);
 
@@ -107,6 +113,61 @@ const CSVGraphApp = () => {
 
     setNormalizedData(normalized);
   };
+
+  // Function to perform linear regression
+  function linearRegression(data) {
+    const n = data.length;
+    const sumX = data.reduce((sum, point) => sum + point.middleTime, 0);
+    const sumY = data.reduce((sum, point) => sum + point.meanWeight, 0);
+    const sumXY = data.reduce((sum, point) => sum + point.middleTime * point.meanWeight, 0);
+    const sumX2 = data.reduce((sum, point) => sum + point.middleTime * point.middleTime, 0);
+
+    const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+    const intercept = (sumY - slope * sumX) / n;
+
+    // Calculate R²
+    const meanY = sumY / n;
+    const ssTotal = data.reduce((sum, point) => sum + Math.pow(point.meanWeight - meanY, 2), 0);
+    const ssRes = data.reduce((sum, point) => sum + Math.pow(point.meanWeight - (slope * point.middleTime + intercept), 2), 0);
+    const rSquared = 1 - ssRes / ssTotal;
+
+    return { slope, rSquared };
+  }
+
+  // Find inflection point
+  function findInflectionPoint(pullMeans) {
+    let bestSplitIndex = -1;
+    let maxR2Sum = -Infinity;
+    let bestA1 = 0;
+    let bestA2 = 0;
+
+    for (let i = 3; i < pullMeans.length - 3; i++) {
+      const formerPhase = pullMeans.slice(0, i);
+      const latterPhase = pullMeans.slice(i);
+
+      const { slope: a1, rSquared: r2_1 } = linearRegression(formerPhase);
+      const { slope: a2, rSquared: r2_2 } = linearRegression(latterPhase);
+
+      if (a1 > a2) {
+        const r2Sum = r2_1 + r2_2;
+        if (r2Sum > maxR2Sum) {
+          maxR2Sum = r2Sum;
+          bestSplitIndex = i;
+          bestA1 = a1;
+          bestA2 = a2;
+        }
+      }
+    }
+
+    if (bestSplitIndex !== -1) {
+      const inflectionPoint = pullMeans[bestSplitIndex].middleTime;
+      console.log('Inflection Point:', inflectionPoint);
+      return inflectionPoint;
+    } else {
+      console.log('Inflection point not found.');
+      return null;
+    }
+  }
 
   return (
     <div>
