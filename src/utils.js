@@ -42,6 +42,12 @@
         const crossTime = (b2 - b1) / (a1 - a2);
         const crossWeight = a1 * crossTime + b1;
 
+        // Cross point should be within the range of the measurements
+        if (crossTime < formerPhase[0].startTime || crossTime > latterPhase[latterPhase.length - 1].endTime) {
+          console.log('The cross point is not within the range of the two phases. Discarding the result. i=', i);
+          continue;
+        }
+
         results.push({
           i: i,
           r2Sum: r2Sum,
