@@ -1,0 +1,27 @@
+.app-container {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  background-color: #f5f5f5;
+}
+
+.controls {
+  margin-bottom: 15px;
+}
+
+.control-label {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.control-select, .control-input {
+  padding: 5px;
+  margin-left: 5px;
+}
+
+.inflection-point {
+  margin: 20px 0;
+  padding: 10px;
+  background-color: #d1e7dd;
+  border-left: 5px solid #0f5132;
+  font-size: 1.2em;
+}

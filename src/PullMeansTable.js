@@ -1,40 +1,41 @@
 // PullMeansTable.js
 import React from 'react';
+import './PullMeansTable.css';
 
 const PullMeansTable = ({ pullMeans }) => {
   return (
     <div>
       <h1>Pull Means</h1>
-      <table style={{ border: '1px solid black', borderCollapse: 'collapse' }}>
+      <table className="pull-means-table">
         <thead>
           <tr>
-            <th style={{ border: '1px solid black' }}> </th>
-            <th style={{ border: '1px solid black' }}>Mean weight</th>
-            <th style={{ border: '1px solid black' }}>Difference between last pull</th>
-            <th style={{ border: '1px solid black' }}>Increment of the differences</th>
-            <th style={{ border: '1px solid black' }}>Duration</th>
-            <th style={{ border: '1px solid black' }}>Rest Time</th>
-            <th style={{ border: '1px solid black' }}>Middle Time</th>
+            <th></th>
+            <th>Mean weight</th>
+            <th>Difference between last pull</th>
+            <th>Increment of the differences</th>
+            <th>Duration</th>
+            <th>Rest Time</th>
+            <th>Middle Time</th>
           </tr>
         </thead>
         <tbody>
           {pullMeans.map((pull) => (
             <tr key={pull.pullNumber}>
-              <td style={{ border: '1px solid black' }}>{`Pull ${pull.pullNumber}`}</td>
-              <td style={{ border: '1px solid black' }}>{pull.meanWeight.toFixed(2)}</td>
-              <td style={{ border: '1px solid black' }}>
+              <td>{`Pull ${pull.pullNumber}`}</td>
+              <td>{pull.meanWeight.toFixed(2)}</td>
+              <td>
                 {pull.difference !== null ? pull.difference.toFixed(2) : ''}
               </td>
-              <td style={{ border: '1px solid black' }}>
+              <td>
                 {pull.increment !== null && pull.increment !== undefined
                   ? `${pull.increment.toFixed(2)}%`
                   : ''}
               </td>
-              <td style={{ border: '1px solid black' }}>{pull.duration.toFixed(2)} s</td>
-              <td style={{ border: '1px solid black' }}>
+              <td>{pull.duration.toFixed(2)} s</td>
+              <td>
                 {pull.restTime !== null ? `${pull.restTime.toFixed(2)} s` : ''}
               </td>
-              <td style={{ border: '1px solid black' }}>
+              <td>
                 {pull.middleTime !== null ? pull.middleTime.toFixed(2) : ''} s
               </td>
             </tr>

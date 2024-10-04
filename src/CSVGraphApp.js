@@ -14,6 +14,7 @@ import {
 import { exampleData, generateArray } from './exampleData';
 import { findInflectionPoint, calculatePullMeans } from './utils';
 import PullMeansTable from './PullMeansTable';
+import './CSVGraphApp.css';
 
 const CSVGraphApp = () => {
   const [dataSource, setDataSource] = useState('generateArray'); // New state for data source
@@ -123,20 +124,21 @@ const CSVGraphApp = () => {
   };
 
   return (
-    <div>
-      <div>
-        <label>
+    <div className="app-container">
+      <div className="controls">
+        <label className="control-label">
           Data Source:
-          <select value={dataSource} onChange={handleDataSourceChange}>
+          <select className="control-select" value={dataSource} onChange={handleDataSourceChange}>
             <option value="exampleData">Example Data</option>
             <option value="generateArray">Generate Array</option>
           </select>
         </label>
       </div>
-      <div>
-        <label>
+      <div className="controls">
+        <label className="control-label">
           Threshold (0.5 - 10 kg):
           <input
+            className="control-input"
             type="number"
             value={threshold}
             min="0.5"
@@ -146,10 +148,14 @@ const CSVGraphApp = () => {
           />
         </label>
       </div>
-      <div>
-        <label>
+      <div className="controls">
+        <label className="control-label">
           Select Inflection Point:
-          <select onChange={handleInflectionPointChange} value={selectedInflectionPoint ? inflectionPoints.indexOf(selectedInflectionPoint) : ""}>
+          <select
+            className="control-select"
+            onChange={handleInflectionPointChange}
+            value={selectedInflectionPoint ? inflectionPoints.indexOf(selectedInflectionPoint) : ""}
+          >
             <option value="">--Select--</option>
             {inflectionPoints.map((point, index) => (
               <option key={index} value={index}>
@@ -195,7 +201,7 @@ const CSVGraphApp = () => {
       </ResponsiveContainer>
 
       {selectedInflectionPoint && (
-        <div style={{ margin: '20px 0', fontWeight: 'bold' }}>
+        <div className="inflection-point">
           Inflection Point Value: {selectedInflectionPoint.otWeight.toFixed(2)} kg
         </div>
       )}
