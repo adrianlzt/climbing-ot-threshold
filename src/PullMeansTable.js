@@ -3,9 +3,16 @@ import React from 'react';
 import './PullMeansTable.css';
 
 const PullMeansTable = ({ pullMeans }) => {
+  const isPullCountInvalid = pullMeans.length !== 9;
+
   return (
     <div>
-      <h1>Pull Means</h1>
+      <h1>Pull info</h1>
+      {isPullCountInvalid && (
+        <div className="error-message">
+          Error: The number of pulls must be exactly 9.
+        </div>
+      )}
       <table className="pull-means-table">
         <thead>
           <tr>
