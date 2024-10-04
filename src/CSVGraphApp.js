@@ -1,24 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import {
   ResponsiveContainer,
-  BarChart,
+  ComposedChart,
   CartesianGrid,
   XAxis,
   YAxis,
   Tooltip,
   Legend,
   Bar,
-  ScatterChart,
   Scatter,
 } from 'recharts';
 import { exampleData, generateArray } from './exampleData';
 
 const CSVGraphApp = () => {
-  const [data, setData] = useState(exampleData);
-  // const [data, setData] = useState(generateArray); // Generate random data
+  // const [data, setData] = useState(exampleData);
+  const [data, setData] = useState(generateArray); // Generate random data
   const [threshold, setThreshold] = useState(0.5); // Default threshold
   const [pullMeans, setPullMeans] = useState([]);
   const [normalizedData, setNormalizedData] = useState([]);
+  const [combinedData, setCombinedData] = useState([]);
 
   useEffect(() => {
     // Normalize the data when 'data' changes
@@ -97,6 +97,30 @@ const CSVGraphApp = () => {
   }, [normalizedData, threshold]);
 
   useEffect(() => {
+    // Combine normalizedData and pullMeans into combinedData
+    const combineData = () => {
+      // Initialize combinedData with normalizedData and meanWeight as null
+      const combined = normalizedData.map((point) => ({
+        time: point.time,
+        weight: point.weight,
+        meanWeight: null,
+      }));
+
+      // Assign meanWeight to the corresponding time
+      pullMeans.forEach((pull) => {
+        const index = combined.findIndex((dataPoint) => dataPoint.time === pull.middleTime);
+        if (index !== -1) {
+          combined[index].meanWeight = pull.meanWeight;
+        }
+      });
+
+      setCombinedData(combined);
+    };
+
+    combineData();
+  }, [normalizedData, pullMeans]);
+
+  useEffect(() => {
     // Find inflection point when 'pullMeans' changes
     const findInflectionPoint = (pullMeans) => {
       const linearRegression = (data) => {
@@ -112,8 +136,7 @@ const CSVGraphApp = () => {
         const meanY = sumY / n;
         const ssTotal = data.reduce((sum, point) => sum + Math.pow(point.meanWeight - meanY, 2), 0);
         const ssRes = data.reduce(
-          (sum, point) =>
-            sum + Math.pow(point.meanWeight - (slope * point.middleTime + intercept), 2),
+          (sum, point) => sum + Math.pow(point.meanWeight - (slope * point.middleTime + intercept), 2),
           0
         );
         const rSquared = 1 - ssRes / ssTotal;
@@ -167,8 +190,8 @@ const CSVGraphApp = () => {
           />
         </label>
       </div>
-      <ResponsiveContainer width="95%" height={300}>
-        <BarChart data={normalizedData}>
+      <ResponsiveContainer width="95%" height={400}>
+        <ComposedChart data={combinedData}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             dataKey="time"
@@ -181,24 +204,8 @@ const CSVGraphApp = () => {
           <Tooltip />
           <Legend />
           <Bar dataKey="weight" fill="#8884d8" />
-        </BarChart>
-      </ResponsiveContainer>
-
-      <ResponsiveContainer width="100%" height={400}>
-        <ScatterChart>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis
-            dataKey="middleTime"
-            name="Time"
-            unit="s"
-            tickFormatter={(value) => value.toFixed(1)}
-          />
-          <YAxis dataKey="meanWeight" name="Weight" unit="kg" />
-
-          <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-          <Legend />
-          <Scatter name="Mean Weights" data={pullMeans} fill="red" />
-        </ScatterChart>
+          <Scatter name="Mean Weights" dataKey="meanWeight" fill="red" />
+        </ComposedChart>
       </ResponsiveContainer>
 
       <h1>Pull Means</h1>
