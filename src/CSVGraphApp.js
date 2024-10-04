@@ -57,6 +57,7 @@ const CSVGraphApp = () => {
         time: point.time,
         weight: point.weight,
         meanWeight: null,
+        threshold: threshold,
       }));
 
       pullMeans.forEach((pull) => {
@@ -250,6 +251,15 @@ const CSVGraphApp = () => {
             strokeWidth={2}
             dot={false}
             name="Latter Phase Line"
+          />
+          <Line
+            type="linear"
+            dataKey="threshold"
+            stroke="black"
+            strokeWidth={1}
+            dot={false}
+            name="Threshold"
+            strokeDasharray="5 5"
           />
         </ComposedChart>
       </ResponsiveContainer>

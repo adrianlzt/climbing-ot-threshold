@@ -15,21 +15,21 @@ Para calcular el OT dicho paper usa el siguiente método:
 The inflection point (time) was determined by the following conditions:
 
 1. The time series sustained force data (360 data) was
-divided into the former and latter phases at all combinations
-(e.g. the former: the latter, 3: 357, 4: 356,..., 356: 4, 357: 3),
-and respective regression lines were calculated (see Figure 2).
+   divided into the former and latter phases at all combinations
+   (e.g. the former: the latter, 3: 357, 4: 356,..., 356: 4, 357: 3),
+   and respective regression lines were calculated (see Figure 2).
 
 2. The best fit regression lines were determined by the
-following conditions: the regression coefficients (a1) in the
-pre-inflection phase were significant and greater than the
-regression coefficients (a2) in any other post-inflection phase,
-and the sum of the determination coefficients of both
-regression equations was highest.
+   following conditions: the regression coefficients (a1) in the
+   pre-inflection phase were significant and greater than the
+   regression coefficients (a2) in any other post-inflection phase,
+   and the sum of the determination coefficients of both
+   regression equations was highest.
 
 3. The inflection point was determined as the time
-corresponding to the boundary point between the former and
-latter time series data when combining the best fit regression
-lines (see Figure 2).
+   corresponding to the boundary point between the former and
+   latter time series data when combining the best fit regression
+   lines (see Figure 2).
 
 ![Figure 2](./images/fig2-yamaji2004.png)
 
@@ -46,5 +46,6 @@ IDEA: unir las repeticiones cogiendo el mínimo de una repetición hasta el mism
 
 ## TODO
 
-- Pintar en el gráfico barras indicando como se mide cada pull. Nos puede ayudar a detectar si hay algún _ruido_ que estamos tomando como pull
 - Generar error si hay un número de pulls diferente a nueve.
+- Permitir subir la barra de threshold en el gráfico en vez de tener que introducir el valor.
+- Revisar la aplicacioń, va muy lenta.
