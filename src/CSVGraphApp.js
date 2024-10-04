@@ -11,19 +11,19 @@ import {
   ScatterChart,
   Scatter,
 } from 'recharts';
-import {exampleData, generateArray} from './exampleData';
+import { exampleData, generateArray } from './exampleData';
 
 const CSVGraphApp = () => {
-  //const [data, setData] = useState(exampleData);
-  const [data, setData] = useState(generateArray); // Generate random data
+  const [data, setData] = useState(exampleData);
+  // const [data, setData] = useState(generateArray); // Generate random data
   const [threshold, setThreshold] = useState(0.5); // Default threshold
   const [pullMeans, setPullMeans] = useState([]);
   const [normalizedData, setNormalizedData] = useState([]);
 
   useEffect(() => {
     // Normalize the data when 'data' changes
-    const minTime = Math.min(...data.map(point => point.time));
-    const normalized = data.map(point => ({
+    const minTime = Math.min(...data.map((point) => point.time));
+    const normalized = data.map((point) => ({
       ...point,
       time: point.time - minTime,
     }));
@@ -112,7 +112,8 @@ const CSVGraphApp = () => {
         const meanY = sumY / n;
         const ssTotal = data.reduce((sum, point) => sum + Math.pow(point.meanWeight - meanY, 2), 0);
         const ssRes = data.reduce(
-          (sum, point) => sum + Math.pow(point.meanWeight - (slope * point.middleTime + intercept), 2),
+          (sum, point) =>
+            sum + Math.pow(point.meanWeight - (slope * point.middleTime + intercept), 2),
           0
         );
         const rSquared = 1 - ssRes / ssTotal;
@@ -120,8 +121,7 @@ const CSVGraphApp = () => {
         return { slope, rSquared };
       };
 
-      let bestSplitIndex = -1;
-      let maxR2Sum = -Infinity;
+      let results = [];
 
       for (let i = 2; i < pullMeans.length - 1; i++) {
         const formerPhase = pullMeans.slice(0, i);
@@ -130,24 +130,26 @@ const CSVGraphApp = () => {
         const { slope: a1, rSquared: r2_1 } = linearRegression(formerPhase);
         const { slope: a2, rSquared: r2_2 } = linearRegression(latterPhase);
 
-        if (a1 < a2) {
-          const r2Sum = r2_1 + r2_2;
-          if (r2Sum > maxR2Sum) {
-            maxR2Sum = r2Sum;
-            bestSplitIndex = i;
-          }
-        }
+        const r2Sum = r2_1 + r2_2;
+
+        results.push({
+          i: i,
+          r2Sum: r2Sum,
+          r2_1: r2_1,
+          r2_2: r2_2,
+          a1: a1,
+          a2: a2,
+          formerPhase: formerPhase,
+        });
       }
 
-      if (bestSplitIndex !== -1) {
-        const inflectionPoint = pullMeans[bestSplitIndex].meanWeight;
-        console.log('Inflection Point:', inflectionPoint);
-      } else {
-        console.log('Inflection point not found.');
-      }
+      results.sort((a, b) => b.r2Sum - a.r2Sum);
+
+      return results;
     };
 
-    findInflectionPoint(pullMeans);
+    const results = findInflectionPoint(pullMeans);
+    console.log('Results:', results);
   }, [pullMeans]);
 
   return (
