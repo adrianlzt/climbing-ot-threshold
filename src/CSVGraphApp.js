@@ -123,14 +123,14 @@ const CSVGraphApp = () => {
       let bestSplitIndex = -1;
       let maxR2Sum = -Infinity;
 
-      for (let i = 3; i < pullMeans.length - 3; i++) {
+      for (let i = 2; i < pullMeans.length - 1; i++) {
         const formerPhase = pullMeans.slice(0, i);
         const latterPhase = pullMeans.slice(i);
 
         const { slope: a1, rSquared: r2_1 } = linearRegression(formerPhase);
         const { slope: a2, rSquared: r2_2 } = linearRegression(latterPhase);
 
-        if (a1 > a2) {
+        if (a1 < a2) {
           const r2Sum = r2_1 + r2_2;
           if (r2Sum > maxR2Sum) {
             maxR2Sum = r2Sum;
@@ -140,7 +140,7 @@ const CSVGraphApp = () => {
       }
 
       if (bestSplitIndex !== -1) {
-        const inflectionPoint = pullMeans[bestSplitIndex].middleTime;
+        const inflectionPoint = pullMeans[bestSplitIndex].meanWeight;
         console.log('Inflection Point:', inflectionPoint);
       } else {
         console.log('Inflection point not found.');
