@@ -11,10 +11,11 @@ import {
   ScatterChart,
   Scatter,
 } from 'recharts';
-import exampleData from './exampleData';
+import {exampleData, generateArray} from './exampleData';
 
 const CSVGraphApp = () => {
-  const [data, setData] = useState(exampleData);
+  //const [data, setData] = useState(exampleData);
+  const [data, setData] = useState(generateArray); // Generate random data
   const [threshold, setThreshold] = useState(0.5); // Default threshold
   const [pullMeans, setPullMeans] = useState([]);
   const [normalizedData, setNormalizedData] = useState([]);
