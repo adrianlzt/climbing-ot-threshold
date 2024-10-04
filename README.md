@@ -6,6 +6,8 @@ El test debe realizarse con un sensor de fuerza, sobre la regleta obtenida con M
 
 Los reposos deben ser muy cortos, menos de un segundo, simplemente para poder recolocar la mano.
 
+Se puede acceder pulsando [aquí](https://climbing-ot-threshold.vercel.app/).
+
 ## Ejemplo de análisis
 
 Resultado de analizar el fichero csv [real-example-data.csv](./public/real-example-data.csv) con la aplicación (si seleccionamos _Real Example Data_ en el _Data source_ estaremos analizando este fichero):
