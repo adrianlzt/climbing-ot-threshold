@@ -16,13 +16,23 @@ import { findInflectionPoint, calculatePullMeans } from './utils';
 import PullMeansTable from './PullMeansTable';
 
 const CSVGraphApp = () => {
-  const [data, setData] = useState(generateArray); // Generate random data
-  const [threshold, setThreshold] = useState(0.5); // Default threshold
+  const [dataSource, setDataSource] = useState('generateArray'); // New state for data source
+  const [data, setData] = useState(dataSource === 'exampleData' ? exampleData : generateArray()); // Initialize data based on dataSource
+  const [threshold, setThreshold] = useState(0.5);
   const [pullMeans, setPullMeans] = useState([]);
   const [normalizedData, setNormalizedData] = useState([]);
   const [combinedData, setCombinedData] = useState([]);
   const [inflectionPoints, setInflectionPoints] = useState([]);
   const [selectedInflectionPoint, setSelectedInflectionPoint] = useState(null);
+
+  useEffect(() => {
+    // Update data when dataSource changes
+    if (dataSource === 'exampleData') {
+      setData(exampleData);
+    } else {
+      setData(generateArray());
+    }
+  }, [dataSource]);
 
   useEffect(() => {
     // Normalize the data when 'data' changes
@@ -56,27 +66,22 @@ const CSVGraphApp = () => {
         }
       });
 
-      // If an inflection point is selected, add line points
       if (selectedInflectionPoint) {
         const { a1, b1, a2, b2, otTime, otWeight, formerEndTime, latterStartTime } = selectedInflectionPoint;
 
-        // Iterate over the normalizedData and calculate the y-values for the lines formerPhaseLine and latterPhaseLine
         for (let i = 0; i < combined.length; i++) {
           const time = combined[i].time;
           let formerPhaseLine = null;
           let latterPhaseLine = null;
 
-          // Check if the time is within the former phase
           if (time <= formerEndTime) {
             formerPhaseLine = a1 * time + b1;
           }
 
-          // Check if the time is within the latter phase
           if (time >= latterStartTime) {
             latterPhaseLine = a2 * time + b2;
           }
 
-          // Add the y-values to the combined data
           combined[i] = {
             ...combined[i],
             formerPhaseLine,
@@ -84,7 +89,6 @@ const CSVGraphApp = () => {
           };
         }
 
-        // Introduce the OT point in the combined data at the right position
         const otIndex = combined.findIndex((point) => point.time >= otTime);
         combined.splice(otIndex, 0, {
           time: otTime,
@@ -94,7 +98,6 @@ const CSVGraphApp = () => {
           latterPhaseLine: null,
           otWeight: otWeight,
         });
-
       }
 
       setCombinedData(combined);
@@ -119,8 +122,21 @@ const CSVGraphApp = () => {
     }
   };
 
+  const handleDataSourceChange = (e) => {
+    setDataSource(e.target.value);
+  };
+
   return (
     <div>
+      <div>
+        <label>
+          Data Source:
+          <select value={dataSource} onChange={handleDataSourceChange}>
+            <option value="exampleData">Example Data</option>
+            <option value="generateArray">Generate Array</option>
+          </select>
+        </label>
+      </div>
       <div>
         <label>
           Threshold (0.5 - 10 kg):
@@ -158,7 +174,6 @@ const CSVGraphApp = () => {
           <YAxis
             label={{ value: 'Weight (kg)', angle: -90, position: 'insideLeft' }}
           />
-          {/* show data in tooltip with only two decimal places */}
           <Tooltip formatter={(value) => value.toFixed(2)} />
           <Legend verticalAlign="top" height={36} />
           <Bar dataKey="weight" fill="#8884d8" />
