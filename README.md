@@ -6,6 +6,12 @@ El test debe realizarse con un sensor de fuerza, sobre la regleta obtenida con M
 
 Los reposos deben ser muy cortos, menos de un segundo, simplemente para poder recolocar la mano.
 
+## Ejemplo de análisis
+
+Resultado de analizar el fichero csv [real-example-data.csv](./public/real-example-data.csv) con la aplicación (si seleccionamos _Real Example Data_ en el _Data source_ estaremos analizando este fichero):
+
+![Ejemplo de análisis](./public/real-example-data.png)
+
 ## Análsis del método de cálculo
 
 Entiendo que este método surge del estudio de [Yamaji y col., (2004)](https://www.researchgate.net/publication/8634784_Relationships_between_Decreasing_Force_and_Muscle_Oxygenation_Kinetics_during_Sustained_Static_Gripping), donde ellos realizaron el test sin solar en ningún momento, validando con un NIRS la disminución de oxigenación en el músculo.
@@ -31,7 +37,7 @@ The inflection point (time) was determined by the following conditions:
    latter time series data when combining the best fit regression
    lines (see Figure 2).
 
-![Figure 2](./images/fig2-yamaji2004.png)
+![Figure 2](./public/fig2-yamaji2004.png)
 
 The inflection point of the gripping force is related to the time
 at the highest Deoxy-Hb, and reflects the beginning and the resumption of the blood flow.
