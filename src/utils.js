@@ -29,6 +29,11 @@
         const { slope: a1, intercept: b1, rSquared: r2_1 } = linearRegression(formerPhase);
         const { slope: a2, intercept: b2, rSquared: r2_2 } = linearRegression(latterPhase);
 
+        if (a1 > a2) {
+            console.log('The former phase has a larger slope than the latter phase. Discarding the result. i=', i);
+            continue;
+        }
+
         const r2Sum = r2_1 + r2_2;
 
         // Calculate the cross point of the two lines

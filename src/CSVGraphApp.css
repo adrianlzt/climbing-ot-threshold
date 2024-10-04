@@ -25,3 +25,8 @@
   border-left: 5px solid #0f5132;
   font-size: 1.2em;
 }
+
+.error-message {
+  color: red;
+  font-weight: bold;
+}

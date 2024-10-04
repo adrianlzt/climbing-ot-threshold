@@ -27,6 +27,7 @@ const CSVGraphApp = () => {
   const [inflectionPoints, setInflectionPoints] = useState([]);
   const [selectedInflectionPoint, setSelectedInflectionPoint] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
     if (dataSource === 'exampleData') {
@@ -103,6 +104,11 @@ const CSVGraphApp = () => {
 
   useEffect(() => {
     const results = findInflectionPoint(pullMeans);
+    if (results.length === 0) {
+      setErrorMessage('No inflection points found.');
+    } else {
+      setErrorMessage(null);
+    }
     setInflectionPoints(results);
     setSelectedInflectionPoint(results[0]);
   }, [pullMeans]);
@@ -253,6 +259,8 @@ const CSVGraphApp = () => {
           Inflection Point Value: {selectedInflectionPoint.otWeight.toFixed(2)} kg
         </div>
       )}
+
+      {errorMessage && <div className="error-message">{errorMessage}</div>}
 
       <PullMeansTable pullMeans={pullMeans} />
     </div>
