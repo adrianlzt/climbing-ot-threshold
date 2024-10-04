@@ -8,6 +8,8 @@ import {
   Tooltip,
   Legend,
   Bar,
+  ScatterChart,
+  Scatter,
 } from 'recharts';
 import exampleData from './exampleData';
 
@@ -82,7 +84,7 @@ const CSVGraphApp = () => {
     for (let i = 2; i < means.length; i++) {
       const currentDifference = means[i].difference;
       const lastDifference = means[i - 1].difference;
-      
+
       if (lastDifference !== 0 && lastDifference !== null && currentDifference !== null) {
         means[i].increment = ((currentDifference - lastDifference) / lastDifference) * 100;
       } else {
@@ -127,6 +129,7 @@ const CSVGraphApp = () => {
           <XAxis
             dataKey="time"
             label={{ value: 'Time', position: 'insideBottom', offset: -5 }}
+            tickFormatter={(value) => value.toFixed(0)}
           />
           <YAxis
             label={{ value: 'Weight', angle: -90, position: 'insideLeft' }}
@@ -135,6 +138,18 @@ const CSVGraphApp = () => {
           <Legend />
           <Bar dataKey="weight" fill="#8884d8" />
         </BarChart>
+      </ResponsiveContainer>
+
+      <ResponsiveContainer width="100%" height={400}>
+        <ScatterChart>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="middleTime" name="Time" unit="s" tickFormatter={(value) => value.toFixed(1)} />
+          <YAxis dataKey="meanWeight" name="Weight" unit="kg" />
+
+          <Tooltip cursor={{ strokeDasharray: '3 3' }} />
+          <Legend />
+          <Scatter name="Mean Weights" data={pullMeans} fill="red" />
+        </ScatterChart>
       </ResponsiveContainer>
 
       <h1>Pull Means</h1>
