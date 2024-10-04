@@ -15,28 +15,28 @@ import { exampleData, generateArray } from './exampleData';
 import { findInflectionPoint, calculatePullMeans } from './utils';
 import PullMeansTable from './PullMeansTable';
 import './CSVGraphApp.css';
+import Papa from 'papaparse';
 
 const CSVGraphApp = () => {
-  const [dataSource, setDataSource] = useState('generateArray'); // New state for data source
-  const [data, setData] = useState(dataSource === 'exampleData' ? exampleData : generateArray()); // Initialize data based on dataSource
+  const [dataSource, setDataSource] = useState('generateArray');
+  const [data, setData] = useState(dataSource === 'exampleData' ? exampleData : generateArray());
   const [threshold, setThreshold] = useState(0.5);
   const [pullMeans, setPullMeans] = useState([]);
   const [normalizedData, setNormalizedData] = useState([]);
   const [combinedData, setCombinedData] = useState([]);
   const [inflectionPoints, setInflectionPoints] = useState([]);
   const [selectedInflectionPoint, setSelectedInflectionPoint] = useState(null);
+  const [uploadedFile, setUploadedFile] = useState(null);
 
   useEffect(() => {
-    // Update data when dataSource changes
     if (dataSource === 'exampleData') {
       setData(exampleData);
-    } else {
+    } else if (dataSource === 'generateArray') {
       setData(generateArray());
     }
   }, [dataSource]);
 
   useEffect(() => {
-    // Normalize the data when 'data' changes
     const minTime = Math.min(...data.map((point) => point.time));
     const normalized = data.map((point) => ({
       ...point,
@@ -46,13 +46,11 @@ const CSVGraphApp = () => {
   }, [data]);
 
   useEffect(() => {
-    // Calculate pullMeans when 'normalizedData' or 'threshold' changes
     const means = calculatePullMeans(normalizedData, threshold);
     setPullMeans(means);
   }, [normalizedData, threshold]);
 
   useEffect(() => {
-    // Combine normalizedData and pullMeans into combinedData
     const combineData = () => {
       let combined = normalizedData.map((point) => ({
         time: point.time,
@@ -104,11 +102,29 @@ const CSVGraphApp = () => {
   }, [normalizedData, pullMeans, selectedInflectionPoint]);
 
   useEffect(() => {
-    // Find inflection points when 'pullMeans' changes
     const results = findInflectionPoint(pullMeans);
     setInflectionPoints(results);
     setSelectedInflectionPoint(results[0]);
   }, [pullMeans]);
+
+  useEffect(() => {
+    if (uploadedFile !== null) {
+    Papa.parse(uploadedFile, {
+      header: true,
+      dynamicTyping: true,
+      complete: (results) => {
+        const parsedData = results.data.map((row) => ({
+          time: parseFloat(row.time),
+          weight: parseFloat(row.weight),
+        }));
+        setData(parsedData);
+      },
+      error: () => {
+        alert('Error parsing CSV file.');
+      },
+    });
+  }
+  }, [uploadedFile]);
 
   const handleInflectionPointChange = (e) => {
     const selectedIndex = e.target.value;
@@ -121,6 +137,29 @@ const CSVGraphApp = () => {
 
   const handleDataSourceChange = (e) => {
     setDataSource(e.target.value);
+    if (e.target.value !== 'uploadCSV') {
+      setUploadedFile(null);
+    }
+  };
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Tindeq csv exports start with a header row with some summary information.
+      // If the first row starts with "date,tag,comment,unit", delete the three first rows.
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const contents = e.target.result;
+        const firstRow = contents.split('\n')[0];
+        if (firstRow.startsWith('date,tag,comment,unit')) {
+          const lines = contents.split('\n').slice(3).join('\n');
+          setUploadedFile(lines);
+        } else {
+          setUploadedFile(contents);
+        }
+      }
+      reader.readAsText(file);
+    }
   };
 
   return (
@@ -129,10 +168,19 @@ const CSVGraphApp = () => {
         <label className="control-label">
           Data Source:
           <select className="control-select" value={dataSource} onChange={handleDataSourceChange}>
-            <option value="exampleData">Example Data</option>
-            <option value="generateArray">Generate Array</option>
+            <option value="exampleData">Real example data</option>
+            <option value="generateArray">Synthetic data</option>
+            <option value="uploadCSV">Upload CSV</option>
           </select>
         </label>
+        {dataSource === 'uploadCSV' && (
+          <input
+            type="file"
+            accept=".csv"
+            onChange={handleFileUpload}
+            className="control-input"
+          />
+        )}
       </div>
       <div className="controls">
         <label className="control-label">
