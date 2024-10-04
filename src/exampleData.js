@@ -3034,29 +3034,32 @@ const exampleData = [
   // Add more data points as needed
 ];
 
+// Generate a perfect set of pulls.
+// Decreasing linearly from 40 to 22 in 5 pull, and then from 22 to 20 in the other 4.
 function generateArray() {
   const result = [];
   let weight = 40;
   const weightDecreasePerSecond = (40 - 22) / (5 * 9); // Weight decrease per second for first 5 groups
   const weightDecreasePerSecondLast = (22 - 20) / (4 * 9); // Weight decrease per second for last 4 groups
 
-  for (let time = 0; time <= 90; time += 0.1) {
-    const groupIndex = Math.floor(time / 10);
-    const timeInGroup = time % 10;
+  for (let time = 0; time.toFixed(2) <= 89; time += 0.1) {
+    let timeFixed = time.toFixed(2);
+    const groupIndex = Math.floor(timeFixed / 10);
+    const timeInGroup = timeFixed % 10;
 
-    if (timeInGroup < 9) {
+    if (timeInGroup <= 9) {
       if (groupIndex < 5) {
         weight = 40 - weightDecreasePerSecond * (groupIndex * 9 + timeInGroup);
       } else {
         weight = 22 - weightDecreasePerSecondLast * ((groupIndex - 5) * 9 + timeInGroup);
       }
       result.push({
-        time: time.toFixed(2),
-        weight: parseFloat(weight.toFixed(2))
+        time: timeFixed,
+        weight: parseFloat(weight)
       });
     } else {
       result.push({
-        time: time.toFixed(2),
+        time: timeFixed,
         weight: 0
       });
     }
