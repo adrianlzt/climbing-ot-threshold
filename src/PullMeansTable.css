@@ -24,3 +24,8 @@
 .pull-means-table tr:hover {
   background-color: #ddd;
 }
+
+.red-cell {
+  background-color: red;
+  color: white; /* Optional: Improve text readability */
+}

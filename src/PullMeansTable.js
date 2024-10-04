@@ -19,27 +19,35 @@ const PullMeansTable = ({ pullMeans }) => {
           </tr>
         </thead>
         <tbody>
-          {pullMeans.map((pull) => (
-            <tr key={pull.pullNumber}>
-              <td>{`Pull ${pull.pullNumber}`}</td>
-              <td>{pull.meanWeight.toFixed(2)}</td>
-              <td>
-                {pull.difference !== null ? pull.difference.toFixed(2) : ''}
-              </td>
-              <td>
-                {pull.increment !== null && pull.increment !== undefined
-                  ? `${pull.increment.toFixed(2)}%`
-                  : ''}
-              </td>
-              <td>{pull.duration.toFixed(2)} s</td>
-              <td>
-                {pull.restTime !== null ? `${pull.restTime.toFixed(2)} s` : ''}
-              </td>
-              <td>
-                {pull.middleTime !== null ? pull.middleTime.toFixed(2) : ''} s
-              </td>
-            </tr>
-          ))}
+          {pullMeans.map((pull) => {
+            const isDurationLow = pull.duration < 5;
+            return (
+              <tr key={pull.pullNumber}>
+                <td>{`Pull ${pull.pullNumber}`}</td>
+                <td>{pull.meanWeight.toFixed(2)}</td>
+                <td>
+                  {pull.difference !== null ? pull.difference.toFixed(2) : ''}
+                </td>
+                <td>
+                  {pull.increment !== null && pull.increment !== undefined
+                    ? `${pull.increment.toFixed(2)}%`
+                    : ''}
+                </td>
+                <td
+                  className={isDurationLow ? 'red-cell' : ''}
+                  title={isDurationLow ? 'Too small. Consider increasing the threshold value.' : ''}
+                >
+                  {pull.duration.toFixed(2)} s
+                </td>
+                <td>
+                  {pull.restTime !== null ? `${pull.restTime.toFixed(2)} s` : ''}
+                </td>
+                <td>
+                  {pull.middleTime !== null ? pull.middleTime.toFixed(2) : ''} s
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
