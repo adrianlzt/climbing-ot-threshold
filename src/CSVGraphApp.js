@@ -116,21 +116,23 @@ const CSVGraphApp = () => {
 
   useEffect(() => {
     if (uploadedFile !== null) {
-    Papa.parse(uploadedFile, {
-      header: true,
-      dynamicTyping: true,
-      complete: (results) => {
-        const parsedData = results.data.map((row) => ({
-          time: parseFloat(row.time),
-          weight: parseFloat(row.weight),
-        }));
-        setData(parsedData);
-      },
-      error: () => {
-        alert('Error parsing CSV file.');
-      },
-    });
-  }
+      Papa.parse(uploadedFile, {
+        header: true,
+        dynamicTyping: true,
+        complete: (results) => {
+          const parsedData = results.data
+            .map((row) => ({
+              time: parseFloat(row.time),
+              weight: parseFloat(row.weight),
+            }))
+            .filter((row) => !isNaN(row.time) && !isNaN(row.weight));
+          setData(parsedData);
+        },
+        error: () => {
+          alert('Error parsing CSV file.');
+        },
+      });
+    }
   }, [uploadedFile]);
 
   const handleInflectionPointChange = (e) => {
@@ -152,17 +154,33 @@ const CSVGraphApp = () => {
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Tindeq csv exports start with a header row with some summary information.
-      // If the first row starts with "date,tag,comment,unit", delete the three first rows.
       const reader = new FileReader();
       reader.onload = (e) => {
         const contents = e.target.result;
-        const firstRow = contents.split('\n')[0];
+        const lines = contents.split('\n');
+        const firstRow = lines[0];
         if (firstRow.startsWith('date,tag,comment,unit')) {
-          const lines = contents.split('\n').slice(3).join('\n');
-          setUploadedFile(lines);
+          const processedLines = lines.slice(3).join('\n');
+          setUploadedFile(processedLines);
         } else {
-          setUploadedFile(contents);
+          const columns = firstRow.split(',');
+          if (
+            columns.length === 5 &&
+            !isNaN(Number(columns[0])) &&
+            Number(columns[0]) > 1600000000000
+          ) {
+            const header = 'time,weight';
+            const processed = lines.map(line => {
+              const cols = line.split(',');
+              if (cols.length < 5) return line;
+              const timeSec = Number(cols[0]) / 1000;
+              const weight = cols[3];
+              return `${timeSec},${weight}`;
+            }).join('\n');
+            setUploadedFile(`${header}\n${processed}`);
+          } else {
+            setUploadedFile(contents);
+          }
         }
       }
       reader.readAsText(file);
