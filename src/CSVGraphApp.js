@@ -1,6 +1,3 @@
-TODO: meter método contínuo
-tal vez se le podría poner un "checkbox" de "método contínuo", donde simplemente descarte cuando hay una caída muy grande de fuerza y haga el cálculo con el resto de puntos
-
 import React, { useState, useEffect } from 'react';
 import {
   ResponsiveContainer,
@@ -169,7 +166,9 @@ const CSVGraphApp = () => {
           const processedLines = lines.slice(3).join('\n');
           setUploadedFile(processedLines);
         } else {
+          //
           const columns = firstRow.split(',');
+          // grip connect csv files have 5 columns and the first column is a timestamp
           if (
             columns.length === 5 &&
             !isNaN(Number(columns[0])) &&

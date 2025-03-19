@@ -6,9 +6,9 @@ import path from 'path';
 
 // Helper function to create a File object
 function createFile(filePath, type) {
-    const fileContent = fs.readFileSync(filePath, 'utf8');
-    const fileName = path.basename(filePath);
-    return new File([fileContent], fileName, { type });
+  const fileContent = fs.readFileSync(filePath, 'utf8');
+  const fileName = path.basename(filePath);
+  return new File([fileContent], fileName, { type });
 }
 
 describe('CSVGraphApp CSV Parsing', () => {
@@ -24,9 +24,9 @@ describe('CSVGraphApp CSV Parsing', () => {
 
     // Upload the file
     await act(async () => {
-        fireEvent.change(screen.getByLabelText(/Upload CSV/), {
-            target: { files: [file] },
-        });
+      fireEvent.change(screen.getByLabelText(/Upload CSV/), {
+        target: { files: [file] },
+      });
     });
 
     // Check that the processed variable is correct
@@ -78,9 +78,9 @@ time,weight
 
     // Upload the file
     await act(async () => {
-        fireEvent.change(screen.getByLabelText(/Upload CSV/), {
-            target: { files: [file] },
-        });
+      fireEvent.change(screen.getByLabelText(/Upload CSV/), {
+        target: { files: [file] },
+      });
     });
 
     // Check that the processed variable is correct
@@ -122,7 +122,7 @@ time,weight
 
     // Spy on the setUploadedFile function
     const setUploadedFileSpy = jest.spyOn(React, 'useState');
-        // Get the last call to setUploadedFile
+    // Get the last call to setUploadedFile
     const lastCall = setUploadedFileSpy.mock.calls.length - 1;
     const uploadedFile = setUploadedFileSpy.mock.calls[lastCall][0];
 
