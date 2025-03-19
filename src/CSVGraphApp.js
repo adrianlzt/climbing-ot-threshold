@@ -62,6 +62,57 @@ export const parseTindeqCSV = (contents) => {
 
 };
 
+export const parseGripConnectCSV = (contents) => {
+  const lines = contents.split('\n');
+    const header = 'time,weight';
+    const processed = lines.map(line => {
+      // Remove quotes and split by comma
+      const cols = line.split(',');
+      if (cols.length < 5) return line;
+      const timeSec = Number(cols[0]) / 1000;
+      const weight = cols[3];
+      return `${timeSec},${weight}`;
+    }).join('\n');
+
+  let results = null;
+  Papa.parse(`${header}\n${processed}`, {
+    header: true,
+    dynamicTyping: true,
+    complete: (pResults) => {
+      results = pResults;
+    }
+  });
+  const parsedData = results.data
+    .map((row) => ({
+      time: parseFloat(row.time),
+      weight: parseFloat(row.weight),
+    }))
+    .filter((row) => !isNaN(row.time) && !isNaN(row.weight));
+  return parsedData;
+};
+
+export const parseGenericCSV = (contents) => {
+  let results = null;
+   Papa.parse(contents, {
+    header: true,
+    dynamicTyping: true,
+    complete: (pResults) => {
+      results = pResults;
+    },
+    error: () => {
+      alert('Error parsing CSV file.');
+      return [];
+    },
+  });
+  const parsedData = results.data
+    .map((row) => ({
+      time: parseFloat(row.time),
+      weight: parseFloat(row.weight),
+    }))
+    .filter((row) => !isNaN(row.time) && !isNaN(row.weight));
+  return parsedData;
+};
+
 const CSVGraphApp = () => {
   const [dataSource, setDataSource] = useState('generateArray');
   const [data, setData] = useState(dataSource === 'exampleData' ? exampleData : generateArray());
@@ -194,57 +245,6 @@ const CSVGraphApp = () => {
     if (e.target.value !== 'uploadCSV') {
       setUploadedFile(null);
     }
-  };
-
-  const parseGripConnectCSV = (contents) => {
-    const lines = contents.split('\n');
-      const header = 'time,weight';
-      const processed = lines.map(line => {
-        // Remove quotes and split by comma
-        const cols = line.split(',');
-        if (cols.length < 5) return line;
-        const timeSec = Number(cols[0]) / 1000;
-        const weight = cols[3];
-        return `${timeSec},${weight}`;
-      }).join('\n');
-
-    let results = null;
-    Papa.parse(`${header}\n${processed}`, {
-      header: true,
-      dynamicTyping: true,
-      complete: (pResults) => {
-        results = pResults;
-      }
-    });
-    const parsedData = results.data
-      .map((row) => ({
-        time: parseFloat(row.time),
-        weight: parseFloat(row.weight),
-      }))
-      .filter((row) => !isNaN(row.time) && !isNaN(row.weight));
-    return parsedData;
-  };
-
-  const parseGenericCSV = (contents) => {
-    let results = null;
-     Papa.parse(contents, {
-      header: true,
-      dynamicTyping: true,
-      complete: (pResults) => {
-        results = pResults;
-      },
-      error: () => {
-        alert('Error parsing CSV file.');
-        return [];
-      },
-    });
-    const parsedData = results.data
-      .map((row) => ({
-        time: parseFloat(row.time),
-        weight: parseFloat(row.weight),
-      }))
-      .filter((row) => !isNaN(row.time) && !isNaN(row.weight));
-    return parsedData;
   };
 
   const handleFileUpload = (e) => {
