@@ -17,6 +17,30 @@ import PullMeansTable from './PullMeansTable';
 import './CSVGraphApp.css';
 import Papa from 'papaparse';
 
+export const detectCSVType = (contents) => {
+  const lines = contents.split('\n');
+  const firstRow = lines[0];
+
+  if (firstRow.startsWith('date,tag,comment,unit')) {
+    return 'Tindeq';
+  }
+
+  const columns = firstRow.split(',');
+  if (
+    columns.length === 5 &&
+    !isNaN(Number(columns[0])) &&
+    Number(columns[0]) > 1600000000000
+  ) {
+    return 'Grip-Connect';
+  }
+
+  if (firstRow.trim().toLowerCase() === 'time,weight') {
+    return 'Generic';
+  }
+
+  return 'Unknown'; // Added unknown type
+};
+
 const CSVGraphApp = () => {
   const [dataSource, setDataSource] = useState('generateArray');
   const [data, setData] = useState(dataSource === 'exampleData' ? exampleData : generateArray());
@@ -149,30 +173,6 @@ const CSVGraphApp = () => {
     if (e.target.value !== 'uploadCSV') {
       setUploadedFile(null);
     }
-  };
-
-  const detectCSVType = (contents) => {
-    const lines = contents.split('\n');
-    const firstRow = lines[0];
-
-    if (firstRow.startsWith('date,tag,comment,unit')) {
-      return 'Tindeq';
-    }
-
-    const columns = firstRow.split(',');
-    if (
-      columns.length === 5 &&
-      !isNaN(Number(columns[0])) &&
-      Number(columns[0]) > 1600000000000
-    ) {
-      return 'Grip-Connect';
-    }
-
-    if (firstRow.trim().toLowerCase() === 'time,weight') {
-      return 'Generic';
-    }
-
-    return 'Unknown'; // Added unknown type
   };
 
   const parseTindeqCSV = (contents) => {
