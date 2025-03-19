@@ -4,6 +4,9 @@ Aplicación para calcular el umbral de oclusión (OT) a partir de un test de fue
 
 El test debe realizarse con un sensor de fuerza, sobre la regleta obtenida con MED-40, realizando toda la fuerza posible.
 
+Si lo hacemos con Tindeq usaremos el programa de "Endurance". Una vez terminado exportaremos el ejercicio. Será un fichero comprimido (.zip),
+donde dentro habrá un fichero .csv con los datos del ejercicio, que será lo que subamos a esta aplicación.
+
 Los reposos deben ser muy cortos, menos de un segundo, simplemente para poder recolocar la mano.
 
 Actualmente se pueden cargar ficheros .csv generados con las aplicaciones de:

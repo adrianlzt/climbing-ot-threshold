@@ -162,7 +162,10 @@ const CSVGraphApp = () => {
         const contents = e.target.result.replace(/"/g, '');
         const lines = contents.split('\n');
         const firstRow = lines[0];
+        // Tindeq csv exports start with a header row with some summary information.
+        // We use that info do determine if the csv format is Tindeq.
         if (firstRow.startsWith('date,tag,comment,unit')) {
+          // For tindeq csvs, we skip the first 3 lines.
           const processedLines = lines.slice(3).join('\n');
           setUploadedFile(processedLines);
         } else {
