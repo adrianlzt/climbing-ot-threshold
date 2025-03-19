@@ -168,7 +168,11 @@ const CSVGraphApp = () => {
       return 'Grip-Connect';
     }
 
-    return 'Generic';
+    if (firstRow.trim().toLowerCase() === 'time,weight') {
+      return 'Generic';
+    }
+
+    return 'Unknown'; // Added unknown type
   };
 
   const parseTindeqCSV = (contents) => {
