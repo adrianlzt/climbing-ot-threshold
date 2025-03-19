@@ -13,6 +13,7 @@ Actualmente se pueden cargar ficheros .csv generados con las aplicaciones de:
 
 - Tindeq
 - <https://grip-connect.vercel.app/>
+- GripMeter (tomar los datos seleccionando mano izquierda)
 
 Se puede acceder pulsando [aquí](https://climbing-ot-threshold.vercel.app/).
 
