@@ -52,7 +52,7 @@ export const parseTindeqCSV = (contents) => {
       results = pResults;
     }
   });
-   const parsedData = results.data
+  const parsedData = results.data
     .map((row) => ({
       time: parseFloat(row.time),
       weight: parseFloat(row.weight),
@@ -63,16 +63,16 @@ export const parseTindeqCSV = (contents) => {
 };
 
 export const parseGripConnectCSV = (contents) => {
-  const lines = contents.split('\n');
-    const header = 'time,weight';
-    const processed = lines.map(line => {
-      // Remove quotes and split by comma
-      const cols = line.split(',');
-      if (cols.length < 5) return line;
-      const timeSec = Number(cols[0]) / 1000;
-      const weight = cols[3];
-      return `${timeSec},${weight}`;
-    }).join('\n');
+  const lines = contents.replace(/"/g, '').split('\n');
+  const header = 'time,weight';
+  const processed = lines.map(line => {
+    // Remove quotes and split by comma
+    const cols = line.split(',');
+    if (cols.length < 5) return line;
+    const timeSec = Number(cols[0]) / 1000;
+    const weight = cols[3];
+    return `${timeSec},${weight}`;
+  }).join('\n');
 
   let results = null;
   Papa.parse(`${header}\n${processed}`, {
@@ -93,7 +93,7 @@ export const parseGripConnectCSV = (contents) => {
 
 export const parseGenericCSV = (contents) => {
   let results = null;
-   Papa.parse(contents, {
+  Papa.parse(contents, {
     header: true,
     dynamicTyping: true,
     complete: (pResults) => {
