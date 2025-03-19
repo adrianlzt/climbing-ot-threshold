@@ -1,4 +1,6 @@
 import { detectCSVType, parseTindeqCSV } from './CSVGraphApp'; // Adjust the import path if necessary
+import * as fs from 'fs';
+import * as path from 'path';
 
 describe('detectCSVType', () => {
   it('should detect Tindeq CSV', () => {
@@ -60,29 +62,7 @@ time,weight`;
   });
 
   it('should correctly parse the contents of src/csv_samples/tindeq_endurance.csv', () => {
-    // Instead of defining this values here, read the contents of the file src/csv_samples/tindeq_endurance.csv AI!
-    const tindeqCSV = `date,tag,comment,unit,time,weight,speed,power
-2024-01-23 16:07:03,40k,No comment,kg,0.0,39.8,0.0,0.0
-2024-01-23 16:07:03,40k,No comment,kg,0.1,39.8,0.0,0.0
-2024-01-23 16:07:03,40k,No comment,kg,0.2,39.8,0.0,0.0
-2024-01-23 16:07:03,40k,No comment,kg,0.3,39.8,0.0,0.0
-2024-01-23 16:07:03,40k,No comment,kg,0.4,39.8,0.0,0.0
-2024-01-23 16:07:04,40k,No comment,kg,0.5,39.8,0.0,0.0
-2024-01-23 16:07:04,40k,No comment,kg,0.6,39.8,0.0,0.0
-2024-01-23 16:07:04,40k,No comment,kg,0.7,39.8,0.0,0.0
-2024-01-23 16:07:04,40k,No comment,kg,0.8,39.8,0.0,0.0
-2024-01-23 16:07:04,40k,No comment,kg,0.9,39.8,0.0,0.0
-2024-01-23 16:07:04,40k,No comment,kg,1.0,39.8,0.0,0.0
-2024-01-23 16:07:04,40k,No comment,kg,1.1,39.8,0.0,0.0
-2024-01-23 16:07:05,40k,No comment,kg,1.2,39.8,0.0,0.0
-2024-01-23 16:07:05,40k,No comment,kg,1.3,39.8,0.0,0.0
-2024-01-23 16:07:05,40k,No comment,kg,1.4,39.8,0.0,0.0
-2024-01-23 16:07:05,40k,No comment,kg,1.5,39.8,0.0,0.0
-2024-01-23 16:07:05,40k,No comment,kg,1.6,39.8,0.0,0.0
-2024-01-23 16:07:05,40k,No comment,kg,1.7,39.8,0.0,0.0
-2024-01-23 16:07:05,40k,No comment,kg,1.8,39.8,0.0,0.0
-2024-01-23 16:07:06,40k,No comment,kg,1.9,39.8,0.0,0.0
-2024-01-23 16:07:06,40k,No comment,kg,2.0,39.8,0.0,0.0`;
+    const tindeqCSV = fs.readFileSync(path.join(__dirname, 'csv_samples', 'tindeq_endurance.csv'), 'utf8');
 
     const expectedData = [
       { time: 0.0, weight: 39.8 },
