@@ -1,0 +1,7 @@
+date,tag,comment,unit,duration (s),tZoneEnabled,mvc,"Target Zone, lower(% of mvc)","Target Zone, upper (% of mvc)",avg,max
+2025-19-03 12:57:05,prueba,,SI,30,No,0.0,-,-,3.0098345663802712,5.391836166381836
+
+time,weight
+0.31,3.08
+0.32,3.11
+0.34,3.16

@@ -1,0 +1,20 @@
+Record description;Control;
+Record date (yyyMMdd_HHmmss;20250319_123624;
+Edge size (mm);12;
+Body weight: 70.0kg
+Max Left: 4,46kg;5444,00ms
+Max Left: 43,70N;5444,00ms
+Max Left: 6,36%(BM);5444,00ms
+Average Left: 2,10kg
+Average Left: 3,01%(BM)
+Average Left: 42,71kg·s
+RFD (200ms) Left: 0,00;kg/s;X0;0;ms;Y0;0,0;kg;X1;0,0;ms;X1;0,0;kg
+RFD (95%) Left: 0,8;kg/s;X0;0;ms;Y0;0,0;kg;X1;5292;ms;Y1;4,2;kg
+
+Sample Number;Time Left(ms);Force Left(kg);Time Right(ms);Force Right(kg)
+1;835,0;1,2;;;
+2;837,0;2,3;;;
+3;840,0;0,0;;;
+4;842,0;0,0;;;
+5;844,0;0,0;;;
+6;845,0;0,0;;;
