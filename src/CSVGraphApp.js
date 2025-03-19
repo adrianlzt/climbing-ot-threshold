@@ -175,7 +175,7 @@ const CSVGraphApp = () => {
     }
   };
 
-  const parseTindeqCSV = (contents) => {
+  export const parseTindeqCSV = (contents) => {
     const lines = contents.split('\n');
     const processedLines = lines.slice(3).join('\n');
     let results = null;
