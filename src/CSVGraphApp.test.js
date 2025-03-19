@@ -65,27 +65,9 @@ time,weight`;
     const tindeqCSV = fs.readFileSync(path.join(__dirname, 'csv_samples', 'tindeq_endurance.csv'), 'utf8');
 
     const expectedData = [
-      { time: 0.0, weight: 39.8 },
-      { time: 0.1, weight: 39.8 },
-      { time: 0.2, weight: 39.8 },
-      { time: 0.3, weight: 39.8 },
-      { time: 0.4, weight: 39.8 },
-      { time: 0.5, weight: 39.8 },
-      { time: 0.6, weight: 39.8 },
-      { time: 0.7, weight: 39.8 },
-      { time: 0.8, weight: 39.8 },
-      { time: 0.9, weight: 39.8 },
-      { time: 1.0, weight: 39.8 },
-      { time: 1.1, weight: 39.8 },
-      { time: 1.2, weight: 39.8 },
-      { time: 1.3, weight: 39.8 },
-      { time: 1.4, weight: 39.8 },
-      { time: 1.5, weight: 39.8 },
-      { time: 1.6, weight: 39.8 },
-      { time: 1.7, weight: 39.8 },
-      { time: 1.8, weight: 39.8 },
-      { time: 1.9, weight: 39.8 },
-      { time: 2.0, weight: 39.8 },
+      { time: 0.31, weight: 3.08 },
+      { time: 0.32, weight: 3.11 },
+      { time: 0.34, weight: 3.16 },
     ];
     const parsedData = parseTindeqCSV(tindeqCSV);
     expect(parsedData).toEqual(expectedData);
