@@ -6,6 +6,11 @@ El test debe realizarse con un sensor de fuerza, sobre la regleta obtenida con M
 
 Los reposos deben ser muy cortos, menos de un segundo, simplemente para poder recolocar la mano.
 
+Actualmente se pueden cargar ficheros .csv generados con las aplicaciones de:
+
+- Tindeq
+- <https://grip-connect.vercel.app/>
+
 Se puede acceder pulsando [aquí](https://climbing-ot-threshold.vercel.app/).
 
 ## Ejemplo de análisis

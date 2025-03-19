@@ -1,3 +1,6 @@
+TODO: meter método contínuo
+tal vez se le podría poner un "checkbox" de "método contínuo", donde simplemente descarte cuando hay una caída muy grande de fuerza y haga el cálculo con el resto de puntos
+
 import React, { useState, useEffect } from 'react';
 import {
   ResponsiveContainer,
@@ -154,39 +157,39 @@ const CSVGraphApp = () => {
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const contents = e.target.result.replace(/"/g, '');
-            const lines = contents.split('\n');
-            const firstRow = lines[0];
-            if (firstRow.startsWith('date,tag,comment,unit')) {
-                const processedLines = lines.slice(3).join('\n');
-                setUploadedFile(processedLines);
-            } else {
-                const columns = firstRow.split(',');
-                if (
-                    columns.length === 5 &&
-                    !isNaN(Number(columns[0])) &&
-                    Number(columns[0]) > 1600000000000
-                ) {
-                    const header = 'time,weight';
-                    const processed = lines.map(line => {
-                        // Remove quotes and split by comma
-                        const cols = line.split(',');
-                        if (cols.length < 5) return line;
-                        const timeSec = Number(cols[0]) / 1000;
-                        const weight = cols[3];
-                        return `${timeSec},${weight}`;
-                    }).join('\n');
-                    setUploadedFile(`${header}\n${processed}`);
-                } else {
-                    setUploadedFile(contents);
-                }
-            }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const contents = e.target.result.replace(/"/g, '');
+        const lines = contents.split('\n');
+        const firstRow = lines[0];
+        if (firstRow.startsWith('date,tag,comment,unit')) {
+          const processedLines = lines.slice(3).join('\n');
+          setUploadedFile(processedLines);
+        } else {
+          const columns = firstRow.split(',');
+          if (
+            columns.length === 5 &&
+            !isNaN(Number(columns[0])) &&
+            Number(columns[0]) > 1600000000000
+          ) {
+            const header = 'time,weight';
+            const processed = lines.map(line => {
+              // Remove quotes and split by comma
+              const cols = line.split(',');
+              if (cols.length < 5) return line;
+              const timeSec = Number(cols[0]) / 1000;
+              const weight = cols[3];
+              return `${timeSec},${weight}`;
+            }).join('\n');
+            setUploadedFile(`${header}\n${processed}`);
+          } else {
+            setUploadedFile(contents);
+          }
         }
-        reader.readAsText(file);
+      }
+      reader.readAsText(file);
     }
-};
+  };
 
   return (
     <div className="app-container">
@@ -233,7 +236,7 @@ const CSVGraphApp = () => {
             <option value="">--Select--</option>
             {inflectionPoints.map((point, index) => (
               <option key={index} value={index}>
-                Inflection Point {point.otWeight.toFixed(2)}kg: R² perfection = {(point.r2Sum/0.02).toFixed(1)} %
+                Inflection Point {point.otWeight.toFixed(2)}kg: R² perfection = {(point.r2Sum / 0.02).toFixed(1)} %
               </option>
             ))}
           </select>
