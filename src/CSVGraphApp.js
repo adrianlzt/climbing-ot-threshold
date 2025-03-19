@@ -151,44 +151,124 @@ const CSVGraphApp = () => {
     }
   };
 
+  const detectCSVType = (contents) => {
+    const lines = contents.split('\n');
+    const firstRow = lines[0];
+
+    if (firstRow.startsWith('date,tag,comment,unit')) {
+      return 'Tindeq';
+    }
+
+    const columns = firstRow.split(',');
+    if (
+      columns.length === 5 &&
+      !isNaN(Number(columns[0])) &&
+      Number(columns[0]) > 1600000000000
+    ) {
+      return 'Grip-Connect';
+    }
+
+    return 'Generic';
+  };
+
+  const parseTindeqCSV = (contents) => {
+    const lines = contents.split('\n');
+    const processedLines = lines.slice(3).join('\n');
+    let results = null;
+    Papa.parse(processedLines, {
+      header: true,
+      dynamicTyping: true,
+      complete: (pResults) => {
+        results = pResults;
+      }
+    });
+     const parsedData = results.data
+      .map((row) => ({
+        time: parseFloat(row.time),
+        weight: parseFloat(row.weight),
+      }))
+      .filter((row) => !isNaN(row.time) && !isNaN(row.weight));
+    return parsedData;
+
+  };
+
+  const parseGripConnectCSV = (contents) => {
+    const lines = contents.split('\n');
+      const header = 'time,weight';
+      const processed = lines.map(line => {
+        // Remove quotes and split by comma
+        const cols = line.split(',');
+        if (cols.length < 5) return line;
+        const timeSec = Number(cols[0]) / 1000;
+        const weight = cols[3];
+        return `${timeSec},${weight}`;
+      }).join('\n');
+
+    let results = null;
+    Papa.parse(`${header}\n${processed}`, {
+      header: true,
+      dynamicTyping: true,
+      complete: (pResults) => {
+        results = pResults;
+      }
+    });
+    const parsedData = results.data
+      .map((row) => ({
+        time: parseFloat(row.time),
+        weight: parseFloat(row.weight),
+      }))
+      .filter((row) => !isNaN(row.time) && !isNaN(row.weight));
+    return parsedData;
+  };
+
+  const parseGenericCSV = (contents) => {
+    let results = null;
+     Papa.parse(contents, {
+      header: true,
+      dynamicTyping: true,
+      complete: (pResults) => {
+        results = pResults;
+      },
+      error: () => {
+        alert('Error parsing CSV file.');
+        return [];
+      },
+    });
+    const parsedData = results.data
+      .map((row) => ({
+        time: parseFloat(row.time),
+        weight: parseFloat(row.weight),
+      }))
+      .filter((row) => !isNaN(row.time) && !isNaN(row.weight));
+    return parsedData;
+  };
+
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
         const contents = e.target.result.replace(/"/g, '');
-        const lines = contents.split('\n');
-        const firstRow = lines[0];
-        // Tindeq csv exports start with a header row with some summary information.
-        // We use that info do determine if the csv format is Tindeq.
-        if (firstRow.startsWith('date,tag,comment,unit')) {
-          // For tindeq csvs, we skip the first 3 lines.
-          const processedLines = lines.slice(3).join('\n');
-          setUploadedFile(processedLines);
-        } else {
-          //
-          const columns = firstRow.split(',');
-          // grip connect csv files have 5 columns and the first column is a timestamp
-          if (
-            columns.length === 5 &&
-            !isNaN(Number(columns[0])) &&
-            Number(columns[0]) > 1600000000000
-          ) {
-            const header = 'time,weight';
-            const processed = lines.map(line => {
-              // Remove quotes and split by comma
-              const cols = line.split(',');
-              if (cols.length < 5) return line;
-              const timeSec = Number(cols[0]) / 1000;
-              const weight = cols[3];
-              return `${timeSec},${weight}`;
-            }).join('\n');
-            setUploadedFile(`${header}\n${processed}`);
-          } else {
-            setUploadedFile(contents);
-          }
+        const csvType = detectCSVType(contents);
+        let parsedData;
+
+        switch (csvType) {
+          case 'Tindeq':
+            parsedData = parseTindeqCSV(contents);
+            break;
+          case 'Grip-Connect':
+            parsedData = parseGripConnectCSV(contents);
+            break;
+          case 'Generic':
+            parsedData = parseGenericCSV(contents);
+            break;
+          default:
+            alert('Unknown CSV type.');
+            return;
         }
-      }
+        setData(parsedData);
+
+      };
       reader.readAsText(file);
     }
   };
