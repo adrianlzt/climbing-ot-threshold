@@ -41,6 +41,27 @@ export const detectCSVType = (contents) => {
   return 'Unknown'; // Added unknown type
 };
 
+export const parseTindeqCSV = (contents) => {
+  const lines = contents.split('\n');
+  const processedLines = lines.slice(3).join('\n');
+  let results = null;
+  Papa.parse(processedLines, {
+    header: true,
+    dynamicTyping: true,
+    complete: (pResults) => {
+      results = pResults;
+    }
+  });
+   const parsedData = results.data
+    .map((row) => ({
+      time: parseFloat(row.time),
+      weight: parseFloat(row.weight),
+    }))
+    .filter((row) => !isNaN(row.time) && !isNaN(row.weight));
+  return parsedData;
+
+};
+
 const CSVGraphApp = () => {
   const [dataSource, setDataSource] = useState('generateArray');
   const [data, setData] = useState(dataSource === 'exampleData' ? exampleData : generateArray());
@@ -173,27 +194,6 @@ const CSVGraphApp = () => {
     if (e.target.value !== 'uploadCSV') {
       setUploadedFile(null);
     }
-  };
-
-  export const parseTindeqCSV = (contents) => {
-    const lines = contents.split('\n');
-    const processedLines = lines.slice(3).join('\n');
-    let results = null;
-    Papa.parse(processedLines, {
-      header: true,
-      dynamicTyping: true,
-      complete: (pResults) => {
-        results = pResults;
-      }
-    });
-     const parsedData = results.data
-      .map((row) => ({
-        time: parseFloat(row.time),
-        weight: parseFloat(row.weight),
-      }))
-      .filter((row) => !isNaN(row.time) && !isNaN(row.weight));
-    return parsedData;
-
   };
 
   const parseGripConnectCSV = (contents) => {
