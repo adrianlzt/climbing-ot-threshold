@@ -38,6 +38,10 @@ export const detectCSVType = (contents) => {
     return 'Generic';
   }
 
+  if (firstRow.startsWith('Record description;Control;')) {
+    return 'GripMeter';
+  }
+
   return 'Unknown'; // Added unknown type
 };
 
@@ -111,6 +115,37 @@ export const parseGenericCSV = (contents) => {
     }))
     .filter((row) => !isNaN(row.time) && !isNaN(row.weight));
   return parsedData;
+};
+
+export const parseGripMeterCSV = (contents) => {
+  const lines = contents.split('\n');
+  const dataStart = lines.findIndex(line => line.startsWith('Sample Number;'));
+  const dataLines = lines.slice(dataStart + 1);
+  const header = 'time,weight';
+
+  const processed = dataLines.map(line => {
+      const cols = line.split(';');
+      if (cols.length < 3) return ''; // Skip lines that don't have enough columns
+      const timeMs = Number(cols[1].replace(',', '.'));
+      const weight = cols[2].replace(',', '.');
+      return `${timeMs / 1000},${weight}`;
+  }).filter(line => line !== '').join('\n');
+
+  let results = null;
+    Papa.parse(`${header}\n${processed}`, {
+      header: true,
+      dynamicTyping: true,
+      complete: (pResults) => {
+        results = pResults;
+      }
+    });
+    const parsedData = results.data
+      .map((row) => ({
+        time: parseFloat(row.time),
+        weight: parseFloat(row.weight),
+      }))
+      .filter((row) => !isNaN(row.time) && !isNaN(row.weight));
+    return parsedData;
 };
 
 const CSVGraphApp = () => {
@@ -255,7 +290,6 @@ const CSVGraphApp = () => {
         const contents = e.target.result.replace(/"/g, '');
         const csvType = detectCSVType(contents);
         let parsedData;
-
         switch (csvType) {
           case 'Tindeq':
             parsedData = parseTindeqCSV(contents);
@@ -265,6 +299,9 @@ const CSVGraphApp = () => {
             break;
           case 'Generic':
             parsedData = parseGenericCSV(contents);
+            break;
+          case 'GripMeter':
+            parsedData = parseGripMeterCSV(contents);
             break;
           default:
             alert('Unknown CSV type.');
