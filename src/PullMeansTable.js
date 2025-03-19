@@ -42,7 +42,7 @@ const PullMeansTable = ({ pullMeans }) => {
                 </td>
                 <td
                   className={isDurationLow ? 'red-cell' : ''}
-                  title={isDurationLow ? 'Too small. Consider increasing the threshold value.' : ''}
+                  title={isDurationLow ? 'Too small, expected around 9s. Consider increasing the threshold value.' : ''}
                 >
                   {pull.duration.toFixed(2)} s
                 </td>
