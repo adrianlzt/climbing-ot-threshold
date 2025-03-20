@@ -19,7 +19,7 @@ describe('detectCSVType', () => {
   });
 
   it('should detect GripMeter CSV', () => {
-    const gripMeterCSV = `Record description;Control;
+    const gripMeterCSV = `Record description;BazBar;
 Record date (yyyMMdd_HHmmss;20250319_123624;`;
     expect(detectCSVType(gripMeterCSV)).toBe('GripMeter');
   });
@@ -158,7 +158,7 @@ describe('parseGenericCSV', () => {
 
 describe('parseGripMeterCSV', () => {
   it('should correctly parse GripMeter CSV data', () => {
-    const gripMeterCSV = `Record description;Control;
+    const gripMeterCSV = `Record description;BarFoo;
 Record date (yyyMMdd_HHmmss;20250319_123624;
 Edge size (mm);12;
 Body weight: 70.0kg
@@ -192,7 +192,7 @@ Sample Number;Time Left(ms);Force Left(kg);Time Right(ms);Force Right(kg)
   });
 
   it('should handle empty CSV data', () => {
-    const gripMeterCSV = `Record description;Control;
+    const gripMeterCSV = `Record description;FooBar;
 Record date (yyyMMdd_HHmmss;20250319_123624;
 Sample Number;Time Left(ms);Force Left(kg);Time Right(ms);Force Right(kg)`;
     const parsedData = parseGripMeterCSV(gripMeterCSV);

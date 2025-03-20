@@ -38,7 +38,7 @@ export const detectCSVType = (contents) => {
     return 'Generic';
   }
 
-  if (firstRow.startsWith('Record description;Control;')) {
+  if (firstRow.startsWith('Record description;')) {
     return 'GripMeter';
   }
 
