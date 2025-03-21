@@ -154,6 +154,7 @@ const CSVGraphApp = () => {
   const [dataSource, setDataSource] = useState('generateArray');
   const [data, setData] = useState(dataSource === 'exampleData' ? exampleData : generateArray());
   const [threshold, setThreshold] = useState(1.5);
+  const [debouncedThreshold, setDebouncedThreshold] = useState(1.5);
   const [selectedInflectionPoint, setSelectedInflectionPoint] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
 
@@ -234,7 +235,7 @@ const CSVGraphApp = () => {
     }
     // Add this return
     return sampledData;
-  }, [normalizedData, pullMeans, threshold, selectedInflectionPoint]);
+  }, [normalizedData, pullMeans, debouncedThreshold, selectedInflectionPoint]);
 
 
   const handleInflectionPointChange = (e) => {
