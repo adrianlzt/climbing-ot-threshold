@@ -158,8 +158,8 @@ const CSVGraphApp = () => {
   const [errorMessage, setErrorMessage] = useState(null);
 
   const normalizedData = useMemo(() => {
-    if (data.length === 0) return [];
-    const minTime = Math.min(...data.map((point) => point.time));
+    if (!data.length) return [];
+    const minTime = data[0].time;
     return data.map((point) => ({
       ...point,
       time: point.time - minTime,
@@ -194,7 +194,11 @@ const CSVGraphApp = () => {
   }, [inflectionPoints]);
 
   const combinedData = useMemo(() => {
-    const result = normalizedData.map(point => ({
+    // Sample data to ~500 points for visualization
+    const sampleInterval = Math.ceil(normalizedData.length / 500);
+    const sampledData = normalizedData.filter((_, index) => index % sampleInterval === 0);
+
+    const result = sampledData.map(point => ({
       time: point.time,
       weight: point.weight,
       threshold: threshold,
@@ -334,9 +338,16 @@ const CSVGraphApp = () => {
           />
           <Tooltip formatter={(value) => value.toFixed(2)} />
           <Legend verticalAlign="top" height={36} />
-          <Bar dataKey="weight" fill="#8884d8" />
-          <Scatter name="Mean Weights" dataKey="meanWeight" fill="red" />
-          <Scatter name="OT Point" dataKey="otWeight" fill="blue" />
+          <Line
+            type="linear"
+            dataKey="weight"
+            stroke="#8884d8"
+            dot={false}
+            strokeWidth={1}
+            isAnimationActive={false}
+          />
+          <Scatter name="Mean Weights" dataKey="meanWeight" fill="red" shape={() => null} line={true} lineType="fitting" isAnimationActive={false}/>
+          <Scatter name="OT Point" dataKey="otWeight" fill="blue" isAnimationActive={false}/>
           <Line
             type="linear"
             dataKey="formerPhaseLine"
@@ -344,6 +355,7 @@ const CSVGraphApp = () => {
             strokeWidth={2}
             dot={false}
             name="Former Phase Line"
+            isAnimationActive={false}
           />
           <Line
             type="linear"
@@ -352,6 +364,7 @@ const CSVGraphApp = () => {
             strokeWidth={2}
             dot={false}
             name="Latter Phase Line"
+            isAnimationActive={false}
           />
           <Line
             type="linear"
@@ -361,6 +374,7 @@ const CSVGraphApp = () => {
             dot={false}
             name="Threshold"
             strokeDasharray="5 5"
+            isAnimationActive={false}
           />
         </ComposedChart>
       </ResponsiveContainer>
