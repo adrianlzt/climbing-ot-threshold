@@ -124,28 +124,28 @@ export const parseGripMeterCSV = (contents) => {
   const header = 'time,weight';
 
   const processed = dataLines.map(line => {
-      const cols = line.split(';');
-      if (cols.length < 3) return ''; // Skip lines that don't have enough columns
-      const timeMs = Number(cols[1].replace(',', '.'));
-      const weight = cols[2].replace(',', '.');
-      return `${timeMs / 1000},${weight}`;
+    const cols = line.split(';');
+    if (cols.length < 3) return ''; // Skip lines that don't have enough columns
+    const timeMs = Number(cols[1].replace(',', '.'));
+    const weight = cols[2].replace(',', '.');
+    return `${timeMs / 1000},${weight}`;
   }).filter(line => line !== '').join('\n');
 
   let results = null;
-    Papa.parse(`${header}\n${processed}`, {
-      header: true,
-      dynamicTyping: true,
-      complete: (pResults) => {
-        results = pResults;
-      }
-    });
-    const parsedData = results.data
-      .map((row) => ({
-        time: parseFloat(row.time),
-        weight: parseFloat(row.weight),
-      }))
-      .filter((row) => !isNaN(row.time) && !isNaN(row.weight));
-    return parsedData;
+  Papa.parse(`${header}\n${processed}`, {
+    header: true,
+    dynamicTyping: true,
+    complete: (pResults) => {
+      results = pResults;
+    }
+  });
+  const parsedData = results.data
+    .map((row) => ({
+      time: parseFloat(row.time),
+      weight: parseFloat(row.weight),
+    }))
+    .filter((row) => !isNaN(row.time) && !isNaN(row.weight));
+  return parsedData;
 };
 
 const CSVGraphApp = () => {
