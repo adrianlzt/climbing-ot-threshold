@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import InfoIcon from './InfoIcon';
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -308,13 +309,17 @@ const CSVGraphApp = () => {
             <option value="uploadCSV">Upload CSV</option>
           </select>
         </label>
+        <InfoIcon text="Select the source of your data: 'Real example data', 'Synthetic data', or upload your own CSV file." />
         {dataSource === 'uploadCSV' && (
-          <input
-            type="file"
-            accept=".csv"
-            onChange={handleFileUpload}
-            className="control-input"
-          />
+          <>
+            <input
+              type="file"
+              accept=".csv"
+              onChange={handleFileUpload}
+              className="control-input"
+            />
+            <InfoIcon text="Upload a CSV file containing your data. Supported formats: Tindeq, Grip-Connect, Generic, and GripMeter." />
+          </>
         )}
       </div>
       <div className="controls">
@@ -330,6 +335,7 @@ const CSVGraphApp = () => {
             onChange={(e) => setThreshold(parseFloat(e.target.value))}
           />
         </label>
+        <InfoIcon text="Set the weight threshold (in kg) for detecting individual pulls. Data points below this threshold will be ignored when calculating pull means." />
       </div>
       <div className="controls">
         <label className="control-label">
@@ -347,6 +353,7 @@ const CSVGraphApp = () => {
             ))}
           </select>
         </label>
+        <InfoIcon text="Select an inflection point from the calculated options. This will display the regression lines and OT point on the graph." />
       </div>
       <ResponsiveContainer width="95%" height={400}>
         <ComposedChart data={combinedData}>

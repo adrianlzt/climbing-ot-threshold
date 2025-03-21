@@ -1,0 +1,33 @@
+.info-icon-container {
+    position: relative;
+    display: inline-block;
+    margin-left: 5px;
+    cursor: pointer;
+  }
+  
+  .info-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: #007bff;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+  }
+  
+  .tooltip {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px;
+    border-radius: 4px;
+    z-index: 1;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
