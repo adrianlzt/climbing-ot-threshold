@@ -352,13 +352,14 @@ const CSVGraphApp = () => {
           <Legend verticalAlign="top" height={36} />
           <Line
             type="linear"
+            name="Weight"
             dataKey="weight"
             stroke="#8884d8"
             dot={false}
             strokeWidth={1}
             isAnimationActive={false}
           />
-          <Line type="monotone" dataKey="meanWeight" stroke="red" dot={false} isAnimationActive={false} name="Mean Weights"/>
+          <Scatter name="Mean weight" dataKey="meanWeight" fill="red" isAnimationActive={false} />
           <Scatter name="OT Point" dataKey="otWeight" fill="blue" isAnimationActive={false} />
           <Line
             type="linear"
