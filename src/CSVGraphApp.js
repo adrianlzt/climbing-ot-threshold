@@ -217,10 +217,22 @@ const CSVGraphApp = () => {
       }
     }
 
-    // Sample data to ~500 points for visualization AFTER calculations
-    const sampleInterval = Math.ceil(result.length / 500);
-    const sampledData = result.filter((_, index) => index % sampleInterval === 0);
+    // Smart downsampling: Preserve meanWeight points
+    const targetSamples = 500;
+    const sampleInterval = Math.max(1, Math.floor(result.length / targetSamples)); // Ensure interval is at least 1
+    const sampledData = [];
+    let lastSampledIndex = -Infinity; // Keep track of the last sampled index
 
+    for (let i = 0; i < result.length; i++) {
+      const hasMeanWeight = result[i].meanWeight !== null && result[i].meanWeight !== undefined;
+      const isOtPoint = result[i].otWeight !== null && result[i].otWeight !== undefined;
+
+      if (hasMeanWeight || isOtPoint || i - lastSampledIndex >= sampleInterval) {
+        sampledData.push(result[i]);
+        lastSampledIndex = i;
+      }
+    }
+    // Add this return
     return sampledData;
   }, [normalizedData, pullMeans, threshold, selectedInflectionPoint]);
 
@@ -346,7 +358,7 @@ const CSVGraphApp = () => {
             strokeWidth={1}
             isAnimationActive={false}
           />
-          <Scatter name="Mean Weights" dataKey="meanWeight" fill="red" isAnimationActive={false} />
+          <Line type="monotone" dataKey="meanWeight" stroke="red" dot={false} isAnimationActive={false} name="Mean Weights"/>
           <Scatter name="OT Point" dataKey="otWeight" fill="blue" isAnimationActive={false} />
           <Line
             type="linear"
