@@ -40,7 +40,7 @@ Record date (yyyMMdd_HHmmss;20250319_123624;`;
 });
 
 describe('parseTindeqCSV', () => {
-  it('should correctly parse Tindeq CSV data', () => {
+  it('should correctly parse Tindeq CSV data', async () => {
     const tindeqCSV = `date,tag,comment,unit,duration (s),tZoneEnabled,mvc,"Target Zone, lower(% of mvc)","Target Zone, upper (% of mvc)",avg,max
 2025-19-03 12:57:05,prueba,,SI,30,No,0.0,-,-,3.0098345663802712,5.391836166381836
 
@@ -54,20 +54,20 @@ time,weight
       { time: 0.24, weight: 2.89 },
       { time: 0.26, weight: 2.91 },
     ];
-    const parsedData = parseTindeqCSV(tindeqCSV);
+    const parsedData = await parseTindeqCSV(tindeqCSV);
     expect(parsedData).toEqual(expectedData);
   });
 
-  it('should handle empty csv', () => {
+  it('should handle empty csv', async () => {
     const tindeqCSV = `date,tag,comment,unit,duration (s),tZoneEnabled,mvc,"Target Zone, lower(% of mvc)","Target Zone, upper (% of mvc)",avg,max
 2025-19-03 12:57:05,prueba,,SI,30,No,0.0,-,-,3.0098345663802712,5.391836166381836
 
 time,weight`;
-    const parsedData = parseTindeqCSV(tindeqCSV);
+    const parsedData = await parseTindeqCSV(tindeqCSV);
     expect(parsedData).toEqual([]);
   });
 
-  it('should correctly parse the contents of src/csv_samples/tindeq_endurance.csv', () => {
+  it('should correctly parse the contents of src/csv_samples/tindeq_endurance.csv', async () => {
     const tindeqCSV = fs.readFileSync(path.join(__dirname, 'csv_samples', 'tindeq_endurance.csv'), 'utf8');
 
     const expectedData = [
@@ -75,14 +75,14 @@ time,weight`;
       { time: 0.32, weight: 3.11 },
       { time: 0.34, weight: 3.16 },
     ];
-    const parsedData = parseTindeqCSV(tindeqCSV);
+    const parsedData = await parseTindeqCSV(tindeqCSV);
     expect(parsedData.slice(0, 3)).toEqual(expectedData);
 
   });
 });
 
 describe('parseGripConnectCSV', () => {
-  it('should correctly parse Grip-Connect CSV data', () => {
+  it('should correctly parse Grip-Connect CSV data', async () => {
     const gripConnectCSV = `"1742385744025","54503","0","0.0017933547496795654","0.0017933547496795654"
 "1742385744025","65942","0","0.009863495826721191","0.009863495826721191"
 "1742385744025","77381","0","0.008608132600784302","0.008608132600784302"`;
@@ -91,30 +91,30 @@ describe('parseGripConnectCSV', () => {
       { time: 1742385744.025, weight: 0.009863495826721191 },
       { time: 1742385744.025, weight: 0.008608132600784302 }
     ];
-    const parsedData = parseGripConnectCSV(gripConnectCSV);
+    const parsedData = await parseGripConnectCSV(gripConnectCSV);
     expect(parsedData).toEqual(expectedData);
   });
 
-  it('should handle empty csv', () => {
+  it('should handle empty csv', async () => {
     const gripConnectCSV = '';
-    const parsedData = parseGripConnectCSV(gripConnectCSV);
+    const parsedData = await parseGripConnectCSV(gripConnectCSV);
     expect(parsedData).toEqual([]);
   });
 
-  it('should correctly parse the contents of src/csv_samples/grip_connect.csv', () => {
+  it('should correctly parse the contents of src/csv_samples/grip_connect.csv', async () => {
     const gripConnectCSV = fs.readFileSync(path.join(__dirname, 'csv_samples', 'grip_connect.csv'), 'utf8');
     const expectedData = [
       { time: 1742385744.025, weight: 0.0017933547496795654 },
       { time: 1742385744.025, weight: 0.009863495826721191 },
       { time: 1742385744.025, weight: 0.008608132600784302 }
     ];
-    const parsedData = parseGripConnectCSV(gripConnectCSV);
+    const parsedData = await parseGripConnectCSV(gripConnectCSV);
     expect(parsedData).toEqual(expectedData);
   });
 });
 
 describe('parseGenericCSV', () => {
-  it('should correctly parse Generic CSV data', () => {
+  it('should correctly parse Generic CSV data', async () => {
     const genericCSV = `time,weight
 0.237374,2.8813068866729736
 0.248806,2.8939054012298584`;
@@ -122,17 +122,17 @@ describe('parseGenericCSV', () => {
       { time: 0.237374, weight: 2.8813068866729736 },
       { time: 0.248806, weight: 2.8939054012298584 },
     ];
-    const parsedData = parseGenericCSV(genericCSV);
+    const parsedData = await parseGenericCSV(genericCSV);
     expect(parsedData).toEqual(expectedData);
   });
 
-  it('should handle empty csv', () => {
+  it('should handle empty csv', async () => {
     const genericCSV = `time,weight`;
-    const parsedData = parseGenericCSV(genericCSV);
+    const parsedData = await parseGenericCSV(genericCSV);
     expect(parsedData).toEqual([]);
   });
 
-  it('should correctly parse the contents of src/csv_samples/generic.csv', () => {
+  it('should correctly parse the contents of src/csv_samples/generic.csv', async () => {
     const genericCSV = fs.readFileSync(path.join(__dirname, 'csv_samples', 'generic.csv'), 'utf8');
     const expectedData = [
       { time: 0.237374, weight: 2.8813068866729736 },
@@ -151,13 +151,13 @@ describe('parseGenericCSV', () => {
       { time: 0.385962, weight: 3.351616382598877 },
       { time: 0.397391, weight: 3.4278345108032227 }
     ];
-    const parsedData = parseGenericCSV(genericCSV);
+    const parsedData = await parseGenericCSV(genericCSV);
     expect(parsedData).toEqual(expectedData);
   });
 });
 
 describe('parseGripMeterCSV', () => {
-  it('should correctly parse GripMeter CSV data', () => {
+  it('should correctly parse GripMeter CSV data', async () => {
     const gripMeterCSV = `Record description;BarFoo;
 Record date (yyyMMdd_HHmmss;20250319_123624;
 Edge size (mm);12;
@@ -187,19 +187,19 @@ Sample Number;Time Left(ms);Force Left(kg);Time Right(ms);Force Right(kg)
       { time: 0.844, weight: 0 },
       { time: 0.845, weight: 0 },
     ];
-    const parsedData = parseGripMeterCSV(gripMeterCSV);
+    const parsedData = await parseGripMeterCSV(gripMeterCSV);
     expect(parsedData).toEqual(expectedData);
   });
 
-  it('should handle empty CSV data', () => {
+  it('should handle empty CSV data', async () => {
     const gripMeterCSV = `Record description;FooBar;
 Record date (yyyMMdd_HHmmss;20250319_123624;
 Sample Number;Time Left(ms);Force Left(kg);Time Right(ms);Force Right(kg)`;
-    const parsedData = parseGripMeterCSV(gripMeterCSV);
+    const parsedData = await parseGripMeterCSV(gripMeterCSV);
     expect(parsedData).toEqual([]);
   });
 
-  it('should correctly parse the contents of src/csv_samples/gripmeter.csv', () => {
+  it('should correctly parse the contents of src/csv_samples/gripmeter.csv', async () => {
     const gripMeterCSV = fs.readFileSync(path.join(__dirname, 'csv_samples', 'gripmeter.csv'), 'utf8');
     const expectedData = [
       { "time": 0.835, "weight": 1.2 },
@@ -210,7 +210,7 @@ Sample Number;Time Left(ms);Force Left(kg);Time Right(ms);Force Right(kg)`;
       { "time": 0.845, "weight": 0 }
     ];
 
-    const parsedData = parseGripMeterCSV(gripMeterCSV);
+    const parsedData = await parseGripMeterCSV(gripMeterCSV);
     expect(parsedData).toEqual(expectedData);
   });
 });
