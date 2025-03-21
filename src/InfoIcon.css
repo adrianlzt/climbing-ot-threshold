@@ -42,8 +42,8 @@
   padding: 20px;
   border-radius: 4px;
   position: relative;
-  max-width: 80%;
-  max-height: 80vh;
+  max-width: 300px;
+  max-height: 60vh;
   overflow-y: auto;
   margin: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -51,11 +51,26 @@
 
 .close-button {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 5px;
+  right: 5px;
   font-size: 20px;
   cursor: pointer;
   background: none;
   border: none;
   color: #333;
+  padding: 0 5px;
+  line-height: 1;
+}
+
+.close-button:hover {
+  color: #000;
+  background-color: #f0f0f0;
+  border-radius: 50%;
+}
+
+.modal-content p {
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  line-height: 1.4;
 }
