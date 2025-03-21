@@ -78,14 +78,22 @@ const calculatePullMeans = (data, threshold) => {
       currentPull.push(point);
     } else {
       if (currentPull.length > 0) {
-        pulls.push(currentPull);
+        // Calculate duration and only push if it's >= 0.5
+        const duration = currentPull[currentPull.length - 1].time - currentPull[0].time;
+        if (duration >= 0.5) {
+          pulls.push(currentPull);
+        }
         currentPull = [];
       }
     }
   });
 
+  // Check the last pull
   if (currentPull.length > 0) {
-    pulls.push(currentPull);
+    const duration = currentPull[currentPull.length - 1].time - currentPull[0].time;
+    if (duration >= 0.5) {
+      pulls.push(currentPull);
+    }
   }
 
   const means = pulls.map((pull, index, arr) => {
