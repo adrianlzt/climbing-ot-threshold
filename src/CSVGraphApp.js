@@ -298,6 +298,10 @@ const CSVGraphApp = () => {
     }
   };
 
+  const maxForce = useMemo(() => {
+    return data.reduce((max, point) => Math.max(max, point.weight), 0);
+  }, [data]);
+
   return (
     <div className="app-container">
       <div className="controls">
@@ -412,7 +416,7 @@ const CSVGraphApp = () => {
 
       {selectedInflectionPoint && (
         <div className="inflection-point">
-          Inflection Point Value: {selectedInflectionPoint.otWeight.toFixed(2)} kg
+          Inflection Point Value: {selectedInflectionPoint.otWeight.toFixed(2)} kg ({((selectedInflectionPoint.otWeight / maxForce) * 100).toFixed(1)}% of max force)
         </div>
       )}
 
