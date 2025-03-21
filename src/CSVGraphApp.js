@@ -346,7 +346,7 @@ const CSVGraphApp = () => {
             strokeWidth={1}
             isAnimationActive={false}
           />
-          <Scatter name="Mean Weights" dataKey="meanWeight" fill="red" shape={() => null} line={true} lineType="fitting" isAnimationActive={false} />
+          <Scatter name="Mean Weights" dataKey="meanWeight" fill="red" isAnimationActive={false} />
           <Scatter name="OT Point" dataKey="otWeight" fill="blue" isAnimationActive={false} />
           <Line
             type="linear"
