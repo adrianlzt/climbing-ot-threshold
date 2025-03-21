@@ -169,13 +169,23 @@ const CSVGraphApp = () => {
 
   const pullMeans = useMemo(() =>
     calculatePullMeans(normalizedData, threshold),
-    [normalizedData, threshold]
+    [normalizedData, debouncedThreshold]
   );
 
   const inflectionPoints = useMemo(() =>
     findInflectionPoint(pullMeans),
     [pullMeans]
   );
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedThreshold(threshold);
+    }, 2000);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [threshold]);
 
   useEffect(() => {
     if (dataSource === 'exampleData') {
