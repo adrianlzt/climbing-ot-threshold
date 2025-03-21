@@ -55,7 +55,7 @@ function App() {
 
   return (
     <div className="App">
-      <div style={{ position: 'absolute', top: 10, left: 10 }}>
+      <div style={{ position: 'absolute', top: 10, right: 10 }}>
         <InfoIcon text={helpText} />
       </div>
       <CSVGraphApp />
