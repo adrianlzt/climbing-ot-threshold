@@ -155,7 +155,6 @@ const CSVGraphApp = () => {
   const [data, setData] = useState(dataSource === 'exampleData' ? exampleData : generateArray());
   const [threshold, setThreshold] = useState(1.5);
   const [selectedInflectionPoint, setSelectedInflectionPoint] = useState(null);
-  const [uploadedFile, setUploadedFile] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
 
   const normalizedData = useMemo(() => {
@@ -233,9 +232,6 @@ const CSVGraphApp = () => {
 
   const handleDataSourceChange = (e) => {
     setDataSource(e.target.value);
-    if (e.target.value !== 'uploadCSV') {
-      setUploadedFile(null);
-    }
   };
 
   const handleFileUpload = async (e) => {
