@@ -194,11 +194,7 @@ const CSVGraphApp = () => {
   }, [inflectionPoints]);
 
   const combinedData = useMemo(() => {
-    // Sample data to ~500 points for visualization
-    const sampleInterval = Math.ceil(normalizedData.length / 500);
-    const sampledData = normalizedData.filter((_, index) => index % sampleInterval === 0);
-
-    const result = sampledData.map(point => ({
+    let result = normalizedData.map(point => ({
       time: point.time,
       weight: point.weight,
       threshold: threshold,
@@ -221,7 +217,11 @@ const CSVGraphApp = () => {
       }
     }
 
-    return result;
+    // Sample data to ~500 points for visualization AFTER calculations
+    const sampleInterval = Math.ceil(result.length / 500);
+    const sampledData = result.filter((_, index) => index % sampleInterval === 0);
+
+    return sampledData;
   }, [normalizedData, pullMeans, threshold, selectedInflectionPoint]);
 
 
