@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -46,119 +46,136 @@ export const detectCSVType = (contents) => {
 };
 
 export const parseTindeqCSV = (contents) => {
-  const lines = contents.split('\n');
-  const processedLines = lines.slice(3).join('\n');
-  let results = null;
-  Papa.parse(processedLines, {
-    header: true,
-    dynamicTyping: true,
-    complete: (pResults) => {
-      results = pResults;
-    }
+  return new Promise((resolve, reject) => {
+    const lines = contents.split('\n');
+    const processedLines = lines.slice(3).join('\n');
+    Papa.parse(processedLines, {
+      header: true,
+      dynamicTyping: true,
+      complete: (pResults) => {
+        const parsedData = pResults.data
+          .map((row) => ({
+            time: parseFloat(row.time),
+            weight: parseFloat(row.weight),
+          }))
+          .filter((row) => !isNaN(row.time) && !isNaN(row.weight));
+        resolve(parsedData);
+      },
+      error: (err) => reject(err)
+    });
   });
-  const parsedData = results.data
-    .map((row) => ({
-      time: parseFloat(row.time),
-      weight: parseFloat(row.weight),
-    }))
-    .filter((row) => !isNaN(row.time) && !isNaN(row.weight));
-  return parsedData;
 
 };
 
 export const parseGripConnectCSV = (contents) => {
-  const lines = contents.replace(/"/g, '').split('\n');
-  const header = 'time,weight';
-  const processed = lines.map(line => {
-    // Remove quotes and split by comma
-    const cols = line.split(',');
-    if (cols.length < 5) return line;
-    const timeSec = Number(cols[0]) / 1000;
-    const weight = cols[3];
-    return `${timeSec},${weight}`;
-  }).join('\n');
+  return new Promise((resolve, reject) => {
+    const lines = contents.replace(/"/g, '').split('\n');
+    const header = 'time,weight';
+    const processed = lines.map(line => {
+      const cols = line.split(',');
+      if (cols.length < 5) return line;
+      const timeSec = Number(cols[0]) / 1000;
+      const weight = cols[3];
+      return `${timeSec},${weight}`;
+    }).join('\n');
 
-  let results = null;
-  Papa.parse(`${header}\n${processed}`, {
-    header: true,
-    dynamicTyping: true,
-    complete: (pResults) => {
-      results = pResults;
-    }
+    Papa.parse(`${header}\n${processed}`, {
+      header: true,
+      dynamicTyping: true,
+      complete: (pResults) => {
+        const parsedData = pResults.data
+          .map((row) => ({
+            time: parseFloat(row.time),
+            weight: parseFloat(row.weight),
+          }))
+          .filter((row) => !isNaN(row.time) && !isNaN(row.weight));
+        resolve(parsedData);
+      },
+      error: (err) => reject(err)
+    });
   });
-  const parsedData = results.data
-    .map((row) => ({
-      time: parseFloat(row.time),
-      weight: parseFloat(row.weight),
-    }))
-    .filter((row) => !isNaN(row.time) && !isNaN(row.weight));
-  return parsedData;
 };
 
 export const parseGenericCSV = (contents) => {
-  let results = null;
-  Papa.parse(contents, {
-    header: true,
-    dynamicTyping: true,
-    complete: (pResults) => {
-      results = pResults;
-    },
-    error: () => {
-      alert('Error parsing CSV file.');
-      return [];
-    },
+  return new Promise((resolve, reject) => {
+    Papa.parse(contents, {
+      header: true,
+      dynamicTyping: true,
+      complete: (pResults) => {
+        const parsedData = pResults.data
+          .map((row) => ({
+            time: parseFloat(row.time),
+            weight: parseFloat(row.weight),
+          }))
+          .filter((row) => !isNaN(row.time) && !isNaN(row.weight));
+        resolve(parsedData);
+      },
+      error: (err) => {
+        reject(err);
+        alert('Error parsing CSV file.');
+      }
+    });
   });
-  const parsedData = results.data
-    .map((row) => ({
-      time: parseFloat(row.time),
-      weight: parseFloat(row.weight),
-    }))
-    .filter((row) => !isNaN(row.time) && !isNaN(row.weight));
-  return parsedData;
 };
 
 export const parseGripMeterCSV = (contents) => {
-  const lines = contents.split('\n');
-  const dataStart = lines.findIndex(line => line.startsWith('Sample Number;'));
-  const dataLines = lines.slice(dataStart + 1);
-  const header = 'time,weight';
+  return new Promise((resolve, reject) => {
+    const lines = contents.split('\n');
+    const dataStart = lines.findIndex(line => line.startsWith('Sample Number;'));
+    const dataLines = lines.slice(dataStart + 1);
+    const header = 'time,weight';
 
-  const processed = dataLines.map(line => {
-    const cols = line.split(';');
-    if (cols.length < 3) return ''; // Skip lines that don't have enough columns
-    const timeMs = Number(cols[1].replace(',', '.'));
-    const weight = cols[2].replace(',', '.');
-    return `${timeMs / 1000},${weight}`;
-  }).filter(line => line !== '').join('\n');
+    const processed = dataLines.map(line => {
+      const cols = line.split(';');
+      if (cols.length < 3) return '';
+      const timeMs = Number(cols[1].replace(',', '.'));
+      const weight = cols[2].replace(',', '.');
+      return `${timeMs / 1000},${weight}`;
+    }).filter(line => line !== '').join('\n');
 
-  let results = null;
-  Papa.parse(`${header}\n${processed}`, {
-    header: true,
-    dynamicTyping: true,
-    complete: (pResults) => {
-      results = pResults;
-    }
+    Papa.parse(`${header}\n${processed}`, {
+      header: true,
+      dynamicTyping: true,
+      complete: (pResults) => {
+        const parsedData = pResults.data
+          .map((row) => ({
+            time: parseFloat(row.time),
+            weight: parseFloat(row.weight),
+          }))
+          .filter((row) => !isNaN(row.time) && !isNaN(row.weight));
+        resolve(parsedData);
+      },
+      error: (err) => reject(err)
+    });
   });
-  const parsedData = results.data
-    .map((row) => ({
-      time: parseFloat(row.time),
-      weight: parseFloat(row.weight),
-    }))
-    .filter((row) => !isNaN(row.time) && !isNaN(row.weight));
-  return parsedData;
 };
 
 const CSVGraphApp = () => {
   const [dataSource, setDataSource] = useState('generateArray');
   const [data, setData] = useState(dataSource === 'exampleData' ? exampleData : generateArray());
   const [threshold, setThreshold] = useState(1.5);
-  const [pullMeans, setPullMeans] = useState([]);
-  const [normalizedData, setNormalizedData] = useState([]);
-  const [combinedData, setCombinedData] = useState([]);
-  const [inflectionPoints, setInflectionPoints] = useState([]);
   const [selectedInflectionPoint, setSelectedInflectionPoint] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
+
+  const normalizedData = useMemo(() => {
+    if (data.length === 0) return [];
+    const minTime = Math.min(...data.map((point) => point.time));
+    return data.map((point) => ({
+      ...point,
+      time: point.time - minTime,
+    }));
+  }, [data]);
+
+  const pullMeans = useMemo(() =>
+    calculatePullMeans(normalizedData, threshold),
+    [normalizedData, threshold]
+  );
+
+  const inflectionPoints = useMemo(() =>
+    findInflectionPoint(pullMeans),
+    [pullMeans]
+  );
 
   useEffect(() => {
     if (dataSource === 'exampleData') {
@@ -169,102 +186,41 @@ const CSVGraphApp = () => {
   }, [dataSource]);
 
   useEffect(() => {
-    const minTime = Math.min(...data.map((point) => point.time));
-    const normalized = data.map((point) => ({
-      ...point,
-      time: point.time - minTime,
-    }));
-    setNormalizedData(normalized);
-  }, [data]);
-
-  useEffect(() => {
-    const means = calculatePullMeans(normalizedData, threshold);
-    setPullMeans(means);
-  }, [normalizedData, threshold]);
-
-  useEffect(() => {
-    const combineData = () => {
-      let combined = normalizedData.map((point) => ({
-        time: point.time,
-        weight: point.weight,
-        meanWeight: null,
-        threshold: threshold,
-      }));
-
-      pullMeans.forEach((pull) => {
-        const index = combined.findIndex((dataPoint) => dataPoint.time === pull.middleTime);
-        if (index !== -1) {
-          combined[index].meanWeight = pull.meanWeight;
-        }
-      });
-
-      if (selectedInflectionPoint) {
-        const { a1, b1, a2, b2, otTime, otWeight, formerEndTime, latterStartTime } = selectedInflectionPoint;
-
-        for (let i = 0; i < combined.length; i++) {
-          const time = combined[i].time;
-          let formerPhaseLine = null;
-          let latterPhaseLine = null;
-
-          if (time <= formerEndTime) {
-            formerPhaseLine = a1 * time + b1;
-          }
-
-          if (time >= latterStartTime) {
-            latterPhaseLine = a2 * time + b2;
-          }
-
-          combined[i] = {
-            ...combined[i],
-            formerPhaseLine,
-            latterPhaseLine,
-          };
-        }
-
-        const otIndex = combined.findIndex((point) => point.time >= otTime);
-        combined[otIndex] = {
-          ...combined[otIndex],
-          otWeight: otWeight,
-        };
-      }
-
-      setCombinedData(combined);
-    };
-
-    combineData();
-  }, [normalizedData, pullMeans, selectedInflectionPoint]);
-
-  useEffect(() => {
-    const results = findInflectionPoint(pullMeans);
-    if (results.length === 0) {
+    if (inflectionPoints.length === 0) {
       setErrorMessage('No inflection points found.');
     } else {
       setErrorMessage(null);
     }
-    setInflectionPoints(results);
-    setSelectedInflectionPoint(results[0]);
-  }, [pullMeans]);
+    setSelectedInflectionPoint(prev => inflectionPoints[0] || prev);
+  }, [inflectionPoints]);
 
-  useEffect(() => {
-    if (uploadedFile !== null) {
-      Papa.parse(uploadedFile, {
-        header: true,
-        dynamicTyping: true,
-        complete: (results) => {
-          const parsedData = results.data
-            .map((row) => ({
-              time: parseFloat(row.time),
-              weight: parseFloat(row.weight),
-            }))
-            .filter((row) => !isNaN(row.time) && !isNaN(row.weight));
-          setData(parsedData);
-        },
-        error: () => {
-          alert('Error parsing CSV file.');
-        },
+  const combinedData = useMemo(() => {
+    const result = normalizedData.map(point => ({
+      time: point.time,
+      weight: point.weight,
+      threshold: threshold,
+      meanWeight: pullMeans.find(p => p.middleTime === point.time)?.meanWeight || null,
+    }));
+
+    if (selectedInflectionPoint) {
+      const { a1, b1, a2, b2, otTime, otWeight, formerEndTime, latterStartTime } = selectedInflectionPoint;
+
+      result.forEach(point => {
+        const formerPhaseLine = point.time <= formerEndTime ? a1 * point.time + b1 : null;
+        const latterPhaseLine = point.time >= latterStartTime ? a2 * point.time + b2 : null;
+        point.formerPhaseLine = formerPhaseLine;
+        point.latterPhaseLine = latterPhaseLine;
       });
+
+      const otIndex = result.findIndex(point => point.time >= otTime);
+      if (otIndex !== -1) {
+        result[otIndex].otWeight = otWeight;
+      }
     }
-  }, [uploadedFile]);
+
+    return result;
+  }, [normalizedData, pullMeans, threshold, selectedInflectionPoint]);
+
 
   const handleInflectionPointChange = (e) => {
     const selectedIndex = e.target.value;
@@ -282,32 +238,36 @@ const CSVGraphApp = () => {
     }
   };
 
-  const handleFileUpload = (e) => {
+  const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (e) => {
-        const contents = e.target.result.replace(/"/g, '');
-        const csvType = detectCSVType(contents);
-        let parsedData;
-        switch (csvType) {
-          case 'Tindeq':
-            parsedData = parseTindeqCSV(contents);
-            break;
-          case 'Grip-Connect':
-            parsedData = parseGripConnectCSV(contents);
-            break;
-          case 'Generic':
-            parsedData = parseGenericCSV(contents);
-            break;
-          case 'GripMeter':
-            parsedData = parseGripMeterCSV(contents);
-            break;
-          default:
-            alert('Unknown CSV type.');
-            return;
+      reader.onload = async (e) => {
+        try {
+          const contents = e.target.result.replace(/"/g, '');
+          const csvType = detectCSVType(contents);
+          let parsedData;
+          switch (csvType) {
+            case 'Tindeq':
+              parsedData = await parseTindeqCSV(contents);
+              break;
+            case 'Grip-Connect':
+              parsedData = await parseGripConnectCSV(contents);
+              break;
+            case 'Generic':
+              parsedData = await parseGenericCSV(contents);
+              break;
+            case 'GripMeter':
+              parsedData = await parseGripMeterCSV(contents);
+              break;
+            default:
+              alert('Unknown CSV type.');
+              return;
+          }
+          setData(parsedData);
+        } catch (error) {
+          alert('Error parsing CSV: ' + error.message);
         }
-        setData(parsedData);
 
       };
       reader.readAsText(file);
